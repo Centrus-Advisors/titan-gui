@@ -112,11 +112,6 @@ const TYPES = {
 // =============              SCHEMA PROCESSING                  ==============
 // ============================================================================
 
-const TABLESCHEMA = [
-    { name: "Name", type: TYPES.STRING(true, 50) },
-    { name: "Salary", type: TYPES.FLOAT(true) }
-];
-
 const processCell = (method, cellSchema, value) => {
     if (!cellSchema) {
         return Either.Left(`No schema found for cell with value "${value}"`);

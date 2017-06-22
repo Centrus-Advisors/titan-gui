@@ -13,6 +13,8 @@ module.exports = app => {
     app.get("/version", purifier.route(routes.version));
     app.get("/", (req, res) => res.redirect("/data-input"));
     app.get("/data-input", purifier.route(routes["data-input"]));
+    app.get("/data-input-api", purifier.route(routes["data-input-api"]));
+    app.post("/data-input", purifier.route(routes["data-input"]));
 
     // Static data
     app.use("/assets", express.static(`${__dirname}/../assets`));
