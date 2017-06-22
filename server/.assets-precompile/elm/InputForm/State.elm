@@ -4,115 +4,169 @@ import InputForm.Types exposing (..)
 import RemoteData
 import Time exposing (Time)
 import DatePicker
+import List.Extra
 
 
 init : { todayDate : Time } -> ( Model, Cmd Msg )
 init _ =
-    { records = form } ! []
+    { records = form
+    , validate = True
+    }
+        ! []
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    model ! []
+    case msg of
+        DoNothing ->
+            model ! []
+
+        ChangeDate idx pickerMsg ->
+            let
+                mPicker =
+                    model.records
+                        |> List.Extra.getAt idx
+                        |> Maybe.map (\( a, b, dbType ) -> dbType)
+                        |> Maybe.andThen getPicker
+            in
+                case mPicker of
+                    Nothing ->
+                        model ! []
+
+                    Just oldPicker ->
+                        let
+                            ( newPicker, newPickerCmd, _ ) =
+                                DatePicker.update pickerMsg oldPicker
+
+                            records =
+                                List.Extra.updateIfIndex
+                                    ((==) idx)
+                                    (tupleMapThird (updateDatePicker newPicker))
+                                    model.records
+                        in
+                            { model | records = records }
+                                ! [ newPickerCmd |> Cmd.map (ChangeDate idx) ]
+
+        ChangeRecord idx val ->
+            let
+                records =
+                    List.Extra.updateIfIndex
+                        ((==) idx)
+                        (tupleMapThird (updateRecord val))
+                        model.records
+            in
+                { model | records = records } ! []
+
+
+tupleMapThird : (c -> c) -> ( a, b, c ) -> ( a, b, c )
+tupleMapThird f ( a, b, c ) =
+    ( a, b, f c )
+
+
+updateDatePicker : DatePicker.DatePicker -> DBType -> DBType
+updateDatePicker newDatePicker dbType =
+    case dbType of
+        DBTimeStamp nullable datePicker ->
+            DBTimeStamp nullable newDatePicker
+
+        DBDate nullable datePicker ->
+            DBDate nullable newDatePicker
+
+        _ ->
+            dbType
+
+
+updateRecord : String -> DBType -> DBType
+updateRecord val dbType =
+    case dbType of
+        DBTimeStamp nullable datePicker ->
+            dbType
+
+        DBDate nullable datePicker ->
+            dbType
+
+        DBString nullable maxLen oldVal ->
+            DBString nullable maxLen val
+
+        DBNumber nullable oldVal ->
+            DBNumber nullable val
+
+        DBFloat nullable oldVal ->
+            DBFloat nullable val
+
+
+getPicker : DBType -> Maybe DatePicker.DatePicker
+getPicker v =
+    case v of
+        DBTimeStamp nullable datePicker ->
+            Just datePicker
+
+        DBDate nullable datePicker ->
+            Just datePicker
+
+        _ ->
+            Nothing
 
 
 subscriptions model =
     Sub.none
 
 
-validate : DBType -> Result String ()
-validate v =
-    case v of
-        DBString nullable maxLen mContent ->
-            ifNotNull nullable
-                mContent
-                (\txt ->
-                    if String.length txt > maxLen then
-                        Err <| "This field exceeds the maximum amount of " ++ (toString maxLen) ++ " characters"
-                    else
-                        Ok ()
-                )
-
-        DBTimeStamp nullable datePicker ->
-            ifNotNull nullable (DatePicker.getDate datePicker) (always <| Ok ())
-
-        DBDate nullable datePicker ->
-            ifNotNull nullable (DatePicker.getDate datePicker) (always <| Ok ())
-
-        DBNumber nullable mInt ->
-            ifNotNull nullable mInt (always <| Ok ())
-
-        DBFloat nullable mFloat ->
-            ifNotNull nullable mFloat (always <| Ok ())
-
-
-ifNotNull canBeNull mValue f =
-    case mValue of
-        Nothing ->
-            if not canBeNull then
-                Err "This field cannot be empty"
-            else
-                Ok ()
-
-        Just value ->
-            f value
-
-
 form =
-    [ ( "RECORD_TYPE", "Record Type", DBString True 50 Nothing )
-    , ( "PRODUCT", "Product", DBString True 50 Nothing )
-    , ( "TRADE_ID", "Trade Id", DBString False 50 Nothing )
-    , ( "ROLE", "Role", DBString True 50 Nothing )
-    , ( "TRADER_NAME", "Trader Name", DBString True 50 Nothing )
-    , ( "TRADER_DESK_CODE", "Trader Desk Code", DBString True 50 Nothing )
-    , ( "TRADER_COMPANY", "Trader Company", DBString True 57 Nothing )
-    , ( "COUNTERPARTY_NAME", "Counterparty Name", DBString True 53 Nothing )
-    , ( "COUNTERPARTY_DESK_CODE", "Counterparty Desk Code", DBString True 50 Nothing )
-    , ( "COUNTERPARTY_COMPANY", "Counterparty Company", DBString True 57 Nothing )
+    [ ( "RECORD_TYPE", "Record Type", DBString True 50 "" )
+    , ( "PRODUCT", "Product", DBString True 50 "" )
+    , ( "TRADE_ID", "Trade Id", DBString False 50 "" )
+    , ( "ROLE", "Role", DBString True 50 "" )
+    , ( "TRADER_NAME", "Trader Name", DBString True 50 "" )
+    , ( "TRADER_DESK_CODE", "Trader Desk Code", DBString True 50 "" )
+    , ( "TRADER_COMPANY", "Trader Company", DBString True 57 "" )
+    , ( "COUNTERPARTY_NAME", "Counterparty Name", DBString True 53 "" )
+    , ( "COUNTERPARTY_DESK_CODE", "Counterparty Desk Code", DBString True 50 "" )
+    , ( "COUNTERPARTY_COMPANY", "Counterparty Company", DBString True 57 "" )
     , ( "DEAL_DATE_TIME", "Deal Date Time", DBTimeStamp False initialDbDate )
     , ( "TRADE_DATE", "Trade Date", DBDate False initialDbDate )
     , ( "START_DATE", "Start Date", DBDate True initialDbDate )
     , ( "TERMINATION_DATE", "Termination Date", DBDate True initialDbDate )
-    , ( "SIDE", "Side", DBString True 50 Nothing )
-    , ( "TICKER", "Ticker", DBString True 56 Nothing )
-    , ( "SECURITY_DESC", "Security Desc", DBString True 50 Nothing )
-    , ( "TRADE_TYPE", "Trade Type", DBString True 50 Nothing )
-    , ( "LEG_NUMBER", "Leg Number", DBString True 50 Nothing )
-    , ( "IDENTIFIER", "Identifier", DBString True 50 Nothing )
-    , ( "CALCULATION_TYPE", "Calculation Type", DBString True 50 Nothing )
-    , ( "FLOATING_REF_PRICE", "Floating Ref Price", DBString True 50 Nothing )
-    , ( "QUANTITY", "Quantity", DBNumber True Nothing )
-    , ( "QUANTITY_UNIT", "Quantity Unit", DBString True 50 Nothing )
-    , ( "PERIODICITY", "Periodicity", DBString True 50 Nothing )
-    , ( "FIXED_PRICE", "Fixed Price", DBFloat True Nothing )
-    , ( "CURRENCY", "Currency", DBString True 50 Nothing )
-    , ( "PRICE_IN", "Price In", DBString True 50 Nothing )
-    , ( "NEAR_LEG_FIXED_PRICE", "Near Leg Fixed Price", DBNumber True Nothing )
-    , ( "MID_PRICE", "Mid Price", DBNumber True Nothing )
-    , ( "NOTIONAL", "Notional", DBNumber True Nothing )
+    , ( "SIDE", "Side", DBString True 50 "" )
+    , ( "TICKER", "Ticker", DBString True 56 "" )
+    , ( "SECURITY_DESC", "Security Desc", DBString True 50 "" )
+    , ( "TRADE_TYPE", "Trade Type", DBString True 50 "" )
+    , ( "LEG_NUMBER", "Leg Number", DBString True 50 "" )
+    , ( "IDENTIFIER", "Identifier", DBString True 50 "" )
+    , ( "CALCULATION_TYPE", "Calculation Type", DBString True 50 "" )
+    , ( "FLOATING_REF_PRICE", "Floating Ref Price", DBString True 50 "" )
+    , ( "QUANTITY", "Quantity", DBNumber True "" )
+    , ( "QUANTITY_UNIT", "Quantity Unit", DBString True 50 "" )
+    , ( "PERIODICITY", "Periodicity", DBString True 50 "" )
+    , ( "FIXED_PRICE", "Fixed Price", DBFloat True "" )
+    , ( "CURRENCY", "Currency", DBString True 50 "" )
+    , ( "PRICE_IN", "Price In", DBString True 50 "" )
+    , ( "NEAR_LEG_FIXED_PRICE", "Near Leg Fixed Price", DBNumber True "" )
+    , ( "MID_PRICE", "Mid Price", DBNumber True "" )
+    , ( "NOTIONAL", "Notional", DBNumber True "" )
     , ( "SETTLEMENT_DATE", "Settlement Date", DBDate True initialDbDate )
-    , ( "SETTLEMENT_CCY", "Settlement Ccy", DBString True 50 Nothing )
-    , ( "MARKET_TYPE", "Market Type", DBString True 50 Nothing )
-    , ( "FIXING_SOURCE", "Fixing Source", DBString True 50 Nothing )
+    , ( "SETTLEMENT_CCY", "Settlement Ccy", DBString True 50 "" )
+    , ( "MARKET_TYPE", "Market Type", DBString True 50 "" )
+    , ( "FIXING_SOURCE", "Fixing Source", DBString True 50 "" )
     , ( "FIXING_DATE", "Fixing Date", DBDate True initialDbDate )
-    , ( "REGISTRATION", "Registration", DBString True 50 Nothing )
-    , ( "DELIVERY_LOCATION", "Delivery Location", DBString True 50 Nothing )
-    , ( "NOTES", "Notes", DBString True 50 Nothing )
-    , ( "COMPETING_QUOTES", "Competing Quotes", DBString True 53 Nothing )
-    , ( "SAVINGS", "Savings", DBString True 53 Nothing )
-    , ( "EXECUTION_VENUE", "Execution Venue", DBString True 50 Nothing )
-    , ( "VENUE_NAME", "Venue Name", DBString True 50 Nothing )
-    , ( "TRADER_LEI", "Trader Lei", DBString True 50 Nothing )
-    , ( "COUNTERPARTY_LEI", "Counterparty Lei", DBString True 50 Nothing )
-    , ( "VENUE_EXECUTION_FEE", "Venue Execution Fee", DBString True 50 Nothing )
-    , ( "USI_UTI_NAMESPACE", "Usi Uti Namespace", DBString True 50 Nothing )
-    , ( "USI_UTI_ID", "Usi Uti Id", DBString True 50 Nothing )
-    , ( "REPORTING_PARTY", "Reporting Party", DBString True 50 Nothing )
-    , ( "CLIENT_ORDER_ID", "Client Order Id", DBString True 50 Nothing )
-    , ( "ACCOUNT_NAME", "Account Name", DBString True 50 Nothing )
-    , ( "ACCOUNT_DESC", "Account Desc", DBString True 50 Nothing )
-    , ( "ACCOUNT_SIDE", "Account Side", DBString True 50 Nothing )
-    , ( "ACCOUNT_VOLUME", "Account Volume", DBString True 50 Nothing )
+    , ( "REGISTRATION", "Registration", DBString True 50 "" )
+    , ( "DELIVERY_LOCATION", "Delivery Location", DBString True 50 "" )
+    , ( "NOTES", "Notes", DBString True 50 "" )
+    , ( "COMPETING_QUOTES", "Competing Quotes", DBString True 53 "" )
+    , ( "SAVINGS", "Savings", DBString True 53 "" )
+    , ( "EXECUTION_VENUE", "Execution Venue", DBString True 50 "" )
+    , ( "VENUE_NAME", "Venue Name", DBString True 50 "" )
+    , ( "TRADER_LEI", "Trader Lei", DBString True 50 "" )
+    , ( "COUNTERPARTY_LEI", "Counterparty Lei", DBString True 50 "" )
+    , ( "VENUE_EXECUTION_FEE", "Venue Execution Fee", DBString True 50 "" )
+    , ( "USI_UTI_NAMESPACE", "Usi Uti Namespace", DBString True 50 "" )
+    , ( "USI_UTI_ID", "Usi Uti Id", DBString True 50 "" )
+    , ( "REPORTING_PARTY", "Reporting Party", DBString True 50 "" )
+    , ( "CLIENT_ORDER_ID", "Client Order Id", DBString True 50 "" )
+    , ( "ACCOUNT_NAME", "Account Name", DBString True 50 "" )
+    , ( "ACCOUNT_DESC", "Account Desc", DBString True 50 "" )
+    , ( "ACCOUNT_SIDE", "Account Side", DBString True 50 "" )
+    , ( "ACCOUNT_VOLUME", "Account Volume", DBString True 50 "" )
     ]
 
 

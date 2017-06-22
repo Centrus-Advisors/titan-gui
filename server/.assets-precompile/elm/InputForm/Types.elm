@@ -6,15 +6,19 @@ import DatePicker exposing (DatePicker)
 
 
 type alias Model =
-    { records : List ( String, String, DBType ) }
+    { records : List ( String, String, DBType )
+    , validate : Bool
+    }
+
+
+type alias Index =
+    Int
 
 
 type Msg
     = DoNothing
-
-
-type DBRecord
-    = DBRecord String DBType
+    | ChangeDate Index DatePicker.Msg
+    | ChangeRecord Index String
 
 
 type alias MaxLength =
@@ -26,11 +30,11 @@ type alias Nullable =
 
 
 type DBType
-    = DBString Nullable MaxLength (Maybe String)
+    = DBString Nullable MaxLength String
     | DBTimeStamp Nullable DatePicker
     | DBDate Nullable DatePicker
-    | DBNumber Nullable (Maybe Int)
-    | DBFloat Nullable (Maybe Float)
+    | DBNumber Nullable String
+    | DBFloat Nullable String
 
 
 
