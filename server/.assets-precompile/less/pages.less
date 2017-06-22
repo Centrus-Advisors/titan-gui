@@ -1,0 +1,309 @@
+@import "variables.less";
+/* ===========
+   Page List
+
+   - topbar
+   - project-details
+
+ =============*/
+
+ /* ===========
+     topbar
+   =============*/
+
+ .topbar-timetracker {
+   display: inline-block;
+   height: 100%;
+   margin: 15px 0px 15px 10px;
+ }
+
+ .topbar-timetracker-counter {
+   display: inline-block;
+   background: rgba(255, 255, 255, 0.05);
+   border: 0;
+   border-radius: 2px;
+   color: white;
+   padding-left: 1em;
+   padding-right: 1em;
+   margin-right: 10px;
+   line-height: 34px;
+ }
+
+/* ===========
+    project-details
+  =============*/
+.projectDetails-buttonGroup {
+    .btn {
+        color: @white;
+        padding-right: 0;
+        padding-left: 0;
+    }
+
+    .btn:first-child {
+        background-color: rgb(11, 65, 71);
+    }
+
+    .btn:last-child {
+        background-color: rgb(102, 187, 106);
+    }
+}.project-file-buttons {
+    .project-file-button-showOnHover {
+        min-width: 7em;
+        display: none;
+    }
+
+    .project-file-button-hideOnHover {
+        min-width: 7em;
+        display: inline-block;
+    }
+
+    &:hover {
+        .project-file-button-showOnHover {
+            display: inline-block;
+        }
+
+        .project-file-button-hideOnHover {
+            display: none;
+        }
+    }
+}
+
+// Avitity part
+.activity-item:before {
+    content: ' ';
+    position: absolute;
+    height: 100%;
+    display: block;
+    border-left: 2px solid #f0f0f0;
+    left: 13px;
+    margin: 0;
+}
+
+.activity-item {
+    padding: 15px 0 15px 50px;
+    position: relative;
+}
+
+.activity-item-icon {
+    position: absolute;
+    left: 0;
+    height: 27px;
+    width: 27px;
+    color: white;
+    border-radius: 50%;
+    text-align: center;
+    padding-top: 4px;
+}
+
+.activity-item-label {
+    display: inline;
+    padding: 0.2em 0.6em 0.3em;
+    font-size: 75%;
+    line-height: 1;
+    color: @lightdark5;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 0.25em;
+}
+
+.activity-item-label:hover {
+    background-color: darken(@light, 10%);
+    color: @lightdark5;
+}
+
+.activity-item-label-contact {
+  background-color: @light;
+}
+
+.activity-item-label-tag {
+  background-color: #dfecf1;
+}
+
+.activity-item-label-project {
+  background-color: #fcf4e6;
+}
+
+.activity-item-icon-email {
+    font-size: 0.8em;
+    transform: translateY(-.2em);
+    background-color: #9fa8da;
+}
+
+.activity-item-icon-other {
+    background-color: #e6e7e8;
+}
+
+.activity-item-icon-call {
+    background-color: #ce93d8;
+}
+
+.activity-item-icon-meeting {
+    background-color: #81c784;
+}
+.activity-item-icon-clock {
+    background-color: #98a6ad;
+}
+.activity-item-icon.activity-item-icon-time-mark {
+    background-color: @light;
+    width: 12px;
+    height: 12px;
+    left: 8px;
+    transform: translateY(12px);
+}
+
+.activity-time-mark {
+    background-color: #eeeeee;
+    padding: .5em 1em;
+    border-radius: 20px;
+    font-size: 13px;
+    color: grey;
+    display: inline-block;
+}
+.activity-delete {
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity .1s;
+}
+.activity-item:hover .activity-delete {
+    opacity: 1;
+}
+.activity-delete:hover {
+    color: @danger;
+}
+/**
+ *    ELM DatePicker
+ */
+
+.elm-datepicker--input:focus {
+    outline: 0;
+}
+
+.elm-datepicker--picker {
+    position: absolute;
+    border: 1px solid #CCC;
+    z-index: 10;
+    background-color: white;
+}
+
+.elm-datepicker--picker-header,
+.elm-datepicker--weekdays {
+    background: #F2F2F2;
+}
+
+.elm-datepicker--picker-header {
+    display: flex;
+    align-items: center;
+}
+
+.elm-datepicker--next-container,
+.elm-datepicker--prev-container {
+    flex: 0 1 auto;
+}
+
+.elm-datepicker--month-container {
+    flex: 1 1 auto;
+    padding: 0.5em;
+    display: flex;
+    flex-direction: column;
+}
+
+.elm-datepicker--month,
+.elm-datepicker--year {
+    flex: 1 1 auto;
+    cursor: default;
+    text-align: center;
+}
+
+.elm-datepicker--year {
+    font-size: 0.6em;
+    font-weight: 700;
+}
+
+.elm-datepicker--next,
+.elm-datepicker--prev {
+    border: 6px solid transparent;
+    display: block;
+    width: 0;
+    height: 0;
+    padding: 0 0.2em;
+}
+
+.elm-datepicker--prev {
+    border-right-color: #AAA;
+}
+
+.elm-datepicker--prev:hover {
+    border-right-color: #BBB;
+}
+
+.elm-datepicker--next {
+    border-left-color: #AAA;
+}
+
+.elm-datepicker--next:hover {
+    border-left-color: #BBB;
+}
+
+.elm-datepicker--table {
+    border-spacing: 0;
+    border-collapse: collapse;
+    font-size: 0.8em;
+}
+
+.elm-datepicker--table td {
+    width: 2em;
+    height: 2em;
+    text-align: center;
+}
+
+.elm-datepicker--row {
+    border-top: 1px solid #F2F2F2;
+}
+
+.elm-datepicker--dow {
+    border-bottom: 1px solid #CCC;
+    cursor: default;
+}
+
+.elm-datepicker--day {
+    cursor: pointer;
+}
+
+.elm-datepicker--day:hover {
+    background: #F2F2F2;
+}
+
+.elm-datepicker--disabled {
+    cursor: default;
+    color: #DDD;
+}
+
+.elm-datepicker--disabled:hover {
+    background: inherit;
+}
+
+.elm-datepicker--picked {
+    color: white;
+    background: darkblue;
+}
+
+.elm-datepicker--picked:hover {
+    background: darkblue;
+}
+
+.elm-datepicker--today {
+    font-weight: bold;
+}
+
+.elm-datepicker--other-month {
+    color: #AAA;
+}
+
+.elm-datepicker--other-month.elm-datepicker--disabled {
+    color: #EEE;
+}
+
+.elm-datepicker--other-month.elm-datepicker--picked {
+    color: white;
+}
