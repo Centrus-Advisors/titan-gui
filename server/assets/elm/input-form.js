@@ -11309,6 +11309,143 @@ var _elm_community$list_extra$List_Extra$init = function () {
 var _elm_community$list_extra$List_Extra$last = _elm_community$list_extra$List_Extra$foldl1(
 	_elm_lang$core$Basics$flip(_elm_lang$core$Basics$always));
 
+//import Maybe, Native.List //
+
+var _elm_lang$core$Native_Regex = function() {
+
+function escape(str)
+{
+	return str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+}
+function caseInsensitive(re)
+{
+	return new RegExp(re.source, 'gi');
+}
+function regex(raw)
+{
+	return new RegExp(raw, 'g');
+}
+
+function contains(re, string)
+{
+	return string.match(re) !== null;
+}
+
+function find(n, re, str)
+{
+	n = n.ctor === 'All' ? Infinity : n._0;
+	var out = [];
+	var number = 0;
+	var string = str;
+	var lastIndex = re.lastIndex;
+	var prevLastIndex = -1;
+	var result;
+	while (number++ < n && (result = re.exec(string)))
+	{
+		if (prevLastIndex === re.lastIndex) break;
+		var i = result.length - 1;
+		var subs = new Array(i);
+		while (i > 0)
+		{
+			var submatch = result[i];
+			subs[--i] = submatch === undefined
+				? _elm_lang$core$Maybe$Nothing
+				: _elm_lang$core$Maybe$Just(submatch);
+		}
+		out.push({
+			match: result[0],
+			submatches: _elm_lang$core$Native_List.fromArray(subs),
+			index: result.index,
+			number: number
+		});
+		prevLastIndex = re.lastIndex;
+	}
+	re.lastIndex = lastIndex;
+	return _elm_lang$core$Native_List.fromArray(out);
+}
+
+function replace(n, re, replacer, string)
+{
+	n = n.ctor === 'All' ? Infinity : n._0;
+	var count = 0;
+	function jsReplacer(match)
+	{
+		if (count++ >= n)
+		{
+			return match;
+		}
+		var i = arguments.length - 3;
+		var submatches = new Array(i);
+		while (i > 0)
+		{
+			var submatch = arguments[i];
+			submatches[--i] = submatch === undefined
+				? _elm_lang$core$Maybe$Nothing
+				: _elm_lang$core$Maybe$Just(submatch);
+		}
+		return replacer({
+			match: match,
+			submatches: _elm_lang$core$Native_List.fromArray(submatches),
+			index: arguments[arguments.length - 2],
+			number: count
+		});
+	}
+	return string.replace(re, jsReplacer);
+}
+
+function split(n, re, str)
+{
+	n = n.ctor === 'All' ? Infinity : n._0;
+	if (n === Infinity)
+	{
+		return _elm_lang$core$Native_List.fromArray(str.split(re));
+	}
+	var string = str;
+	var result;
+	var out = [];
+	var start = re.lastIndex;
+	var restoreLastIndex = re.lastIndex;
+	while (n--)
+	{
+		if (!(result = re.exec(string))) break;
+		out.push(string.slice(start, result.index));
+		start = re.lastIndex;
+	}
+	out.push(string.slice(start));
+	re.lastIndex = restoreLastIndex;
+	return _elm_lang$core$Native_List.fromArray(out);
+}
+
+return {
+	regex: regex,
+	caseInsensitive: caseInsensitive,
+	escape: escape,
+
+	contains: F2(contains),
+	find: F3(find),
+	replace: F4(replace),
+	split: F3(split)
+};
+
+}();
+
+var _elm_lang$core$Regex$split = _elm_lang$core$Native_Regex.split;
+var _elm_lang$core$Regex$replace = _elm_lang$core$Native_Regex.replace;
+var _elm_lang$core$Regex$find = _elm_lang$core$Native_Regex.find;
+var _elm_lang$core$Regex$contains = _elm_lang$core$Native_Regex.contains;
+var _elm_lang$core$Regex$caseInsensitive = _elm_lang$core$Native_Regex.caseInsensitive;
+var _elm_lang$core$Regex$regex = _elm_lang$core$Native_Regex.regex;
+var _elm_lang$core$Regex$escape = _elm_lang$core$Native_Regex.escape;
+var _elm_lang$core$Regex$Match = F4(
+	function (a, b, c, d) {
+		return {match: a, submatches: b, index: c, number: d};
+	});
+var _elm_lang$core$Regex$Regex = {ctor: 'Regex'};
+var _elm_lang$core$Regex$AtMost = function (a) {
+	return {ctor: 'AtMost', _0: a};
+};
+var _elm_lang$core$Regex$All = {ctor: 'All'};
+
 var _elm_lang$http$Native_Http = function() {
 
 
@@ -11886,10 +12023,11 @@ var _krisajenkins$remotedata$RemoteData$update = F2(
 		}
 	});
 
-var _user$project$InputForm_Types$Model = F2(
-	function (a, b) {
-		return {records: a, validate: b};
+var _user$project$InputForm_Types$Model = F3(
+	function (a, b, c) {
+		return {records: a, validate: b, submission: c};
 	});
+var _user$project$InputForm_Types$Submit = {ctor: 'Submit'};
 var _user$project$InputForm_Types$ChangeRecord = F2(
 	function (a, b) {
 		return {ctor: 'ChangeRecord', _0: a, _1: b};
@@ -11919,341 +12057,6 @@ var _user$project$InputForm_Types$DBString = F3(
 	function (a, b, c) {
 		return {ctor: 'DBString', _0: a, _1: b, _2: c};
 	});
-
-var _user$project$InputForm_View$formTitle = F2(
-	function (txt, content) {
-		return A2(
-			_elm_lang$html$Html$div,
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$class('form-group'),
-				_1: {ctor: '[]'}
-			},
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				{
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$label,
-						{ctor: '[]'},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text(txt),
-							_1: {ctor: '[]'}
-						}),
-					_1: {ctor: '[]'}
-				},
-				content));
-	});
-var _user$project$InputForm_View$textAreaField = F3(
-	function (placeholderTxt, contentTxt, onInputMsg) {
-		return A2(
-			_elm_lang$html$Html$textarea,
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$class('form-control'),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$style(
-						{
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'min-height', _1: '34px'},
-							_1: {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'height', _1: 'auto'},
-								_1: {ctor: '[]'}
-							}
-						}),
-					_1: {
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$placeholder(placeholderTxt),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$rows(4),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$value(contentTxt),
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$html$Html_Events$onInput(onInputMsg),
-									_1: {ctor: '[]'}
-								}
-							}
-						}
-					}
-				}
-			},
-			{ctor: '[]'});
-	});
-var _user$project$InputForm_View$inputField = F3(
-	function (placeholderTxt, contentTxt, onInputMsg) {
-		return A2(
-			_elm_lang$html$Html$input,
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$class('form-control'),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$style(
-						{
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'min-height', _1: '34px'},
-							_1: {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'height', _1: 'auto'},
-								_1: {ctor: '[]'}
-							}
-						}),
-					_1: {
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$type_('text'),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$value(contentTxt),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$placeholder(placeholderTxt),
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$html$Html_Events$onInput(onInputMsg),
-									_1: {ctor: '[]'}
-								}
-							}
-						}
-					}
-				}
-			},
-			{ctor: '[]'});
-	});
-var _user$project$InputForm_View$emptyPicker = F2(
-	function (nullable, datePicker) {
-		var _p0 = _elm_community$elm_datepicker$DatePicker$getDate(datePicker);
-		if (_p0.ctor === 'Just') {
-			return _elm_lang$core$Result$Ok(
-				{ctor: '_Tuple0'});
-		} else {
-			return nullable ? _elm_lang$core$Result$Ok(
-				{ctor: '_Tuple0'}) : _elm_lang$core$Result$Err('This field cannot be empty. Please choose a date');
-		}
-	});
-var _user$project$InputForm_View$ifNotNull = F3(
-	function (canBeNull, val, f) {
-		return (_elm_lang$core$String$isEmpty(val) && (!canBeNull)) ? _elm_lang$core$Result$Err('This field cannot be empty') : f(val);
-	});
-var _user$project$InputForm_View$validateType = function (v) {
-	var _p1 = v;
-	switch (_p1.ctor) {
-		case 'DBString':
-			var _p2 = _p1._1;
-			return A3(
-				_user$project$InputForm_View$ifNotNull,
-				_p1._0,
-				_p1._2,
-				function (txt) {
-					return (_elm_lang$core$Native_Utils.cmp(
-						_elm_lang$core$String$length(txt),
-						_p2) > 0) ? _elm_lang$core$Result$Err(
-						A2(
-							_elm_lang$core$Basics_ops['++'],
-							'This field exceeds the maximum amount of ',
-							A2(
-								_elm_lang$core$Basics_ops['++'],
-								_elm_lang$core$Basics$toString(_p2),
-								' characters'))) : _elm_lang$core$Result$Ok(
-						{ctor: '_Tuple0'});
-				});
-		case 'DBTimeStamp':
-			return A2(_user$project$InputForm_View$emptyPicker, _p1._0, _p1._1);
-		case 'DBDate':
-			return A2(_user$project$InputForm_View$emptyPicker, _p1._0, _p1._1);
-		case 'DBNumber':
-			var _p4 = _p1._1;
-			if (_p1._0 && _elm_lang$core$String$isEmpty(_p4)) {
-				return _elm_lang$core$Result$Ok(
-					{ctor: '_Tuple0'});
-			} else {
-				var _p3 = _elm_lang$core$String$toInt(_p4);
-				if (_p3.ctor === 'Ok') {
-					return _elm_lang$core$Result$Ok(
-						{ctor: '_Tuple0'});
-				} else {
-					return _elm_lang$core$Result$Err(
-						A2(
-							_elm_lang$core$Basics_ops['++'],
-							'Could not convert \"',
-							A2(_elm_lang$core$Basics_ops['++'], _p4, '\" to integer. Please insert a valid number')));
-				}
-			}
-		default:
-			var _p6 = _p1._1;
-			if (_p1._0 && _elm_lang$core$String$isEmpty(_p6)) {
-				return _elm_lang$core$Result$Ok(
-					{ctor: '_Tuple0'});
-			} else {
-				var _p5 = _elm_lang$core$String$toFloat(_p6);
-				if (_p5.ctor === 'Ok') {
-					return _elm_lang$core$Result$Ok(
-						{ctor: '_Tuple0'});
-				} else {
-					return _elm_lang$core$Result$Err(
-						A2(
-							_elm_lang$core$Basics_ops['++'],
-							'Could not convert \"',
-							A2(_elm_lang$core$Basics_ops['++'], _p6, '\" to float. Please insert a valid number')));
-				}
-			}
-	}
-};
-var _user$project$InputForm_View$formField = F3(
-	function (idx, placeholder, v) {
-		var _p7 = v;
-		switch (_p7.ctor) {
-			case 'DBString':
-				return A3(
-					_user$project$InputForm_View$inputField,
-					placeholder,
-					_p7._2,
-					_user$project$InputForm_Types$ChangeRecord(idx));
-			case 'DBTimeStamp':
-				return A2(
-					_elm_lang$html$Html$map,
-					_user$project$InputForm_Types$ChangeDate(idx),
-					_elm_community$elm_datepicker$DatePicker$view(_p7._1));
-			case 'DBDate':
-				return A2(
-					_elm_lang$html$Html$div,
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$style(
-							{
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'cursor', _1: 'pointer'},
-								_1: {ctor: '[]'}
-							}),
-						_1: {ctor: '[]'}
-					},
-					{
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$map,
-							_user$project$InputForm_Types$ChangeDate(idx),
-							_elm_community$elm_datepicker$DatePicker$view(_p7._1)),
-						_1: {ctor: '[]'}
-					});
-			case 'DBNumber':
-				return A3(
-					_user$project$InputForm_View$inputField,
-					'Type a number here',
-					_p7._1,
-					_user$project$InputForm_Types$ChangeRecord(idx));
-			default:
-				return A3(
-					_user$project$InputForm_View$inputField,
-					'Type a number here',
-					_p7._1,
-					_user$project$InputForm_Types$ChangeRecord(idx));
-		}
-	});
-var _user$project$InputForm_View$renderFormItem = F3(
-	function (validate, idx, _p8) {
-		var _p9 = _p8;
-		var _p12 = _p9._2;
-		var _p11 = _p9._1;
-		return A2(
-			_elm_lang$html$Html$div,
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$class('col-md-6'),
-				_1: {ctor: '[]'}
-			},
-			{
-				ctor: '::',
-				_0: A2(
-					_user$project$InputForm_View$formTitle,
-					_p11,
-					{
-						ctor: '::',
-						_0: A3(_user$project$InputForm_View$formField, idx, _p11, _p12),
-						_1: {
-							ctor: '::',
-							_0: function () {
-								if (validate) {
-									var _p10 = _user$project$InputForm_View$validateType(_p12);
-									if (_p10.ctor === 'Ok') {
-										return _elm_lang$html$Html$text('');
-									} else {
-										return A2(
-											_elm_lang$html$Html$span,
-											{
-												ctor: '::',
-												_0: _elm_lang$html$Html_Attributes$class('text-danger'),
-												_1: {ctor: '[]'}
-											},
-											{
-												ctor: '::',
-												_0: _elm_lang$html$Html$text(_p10._0),
-												_1: {ctor: '[]'}
-											});
-									}
-								} else {
-									return _elm_lang$html$Html$text('');
-								}
-							}(),
-							_1: {ctor: '[]'}
-						}
-					}),
-				_1: {ctor: '[]'}
-			});
-	});
-var _user$project$InputForm_View$root = function (model) {
-	var toPairs = F2(
-		function (newElement, _p13) {
-			var _p14 = _p13;
-			var _p16 = _p14._0;
-			var _p15 = _p14._1;
-			return _elm_lang$core$List$isEmpty(_p15) ? {
-				ctor: '_Tuple2',
-				_0: _p16,
-				_1: {
-					ctor: '::',
-					_0: newElement,
-					_1: {ctor: '[]'}
-				}
-			} : {
-				ctor: '_Tuple2',
-				_0: {
-					ctor: '::',
-					_0: {ctor: '::', _0: newElement, _1: _p15},
-					_1: _p16
-				},
-				_1: {ctor: '[]'}
-			};
-		});
-	return A2(
-		_elm_lang$html$Html$div,
-		{ctor: '[]'},
-		A2(
-			_elm_lang$core$List$map,
-			_elm_lang$html$Html$div(
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('row'),
-					_1: {ctor: '[]'}
-				}),
-			_elm_lang$core$Tuple$first(
-				A3(
-					_elm_lang$core$List$foldr,
-					toPairs,
-					{
-						ctor: '_Tuple2',
-						_0: {ctor: '[]'},
-						_1: {ctor: '[]'}
-					},
-					A2(
-						_elm_lang$core$List$indexedMap,
-						_user$project$InputForm_View$renderFormItem(model.validate),
-						model.records)))));
-};
 
 var _user$project$InputForm_State$initialDbDate = function () {
 	var defaultSettings = _elm_community$elm_datepicker$DatePicker$defaultSettings;
@@ -12759,95 +12562,203 @@ var _user$project$InputForm_State$form = {
 		}
 	}
 };
+var _user$project$InputForm_State$emptyPicker = F2(
+	function (nullable, datePicker) {
+		var _p1 = _elm_community$elm_datepicker$DatePicker$getDate(datePicker);
+		if (_p1.ctor === 'Just') {
+			return _elm_lang$core$Result$Ok(
+				{ctor: '_Tuple0'});
+		} else {
+			return nullable ? _elm_lang$core$Result$Ok(
+				{ctor: '_Tuple0'}) : _elm_lang$core$Result$Err('This field cannot be empty. Please choose a date');
+		}
+	});
+var _user$project$InputForm_State$ifNotNull = F3(
+	function (canBeNull, val, f) {
+		return (_elm_lang$core$String$isEmpty(val) && (!canBeNull)) ? _elm_lang$core$Result$Err('This field cannot be empty') : f(val);
+	});
+var _user$project$InputForm_State$validateType = function (v) {
+	var _p2 = v;
+	switch (_p2.ctor) {
+		case 'DBString':
+			var _p3 = _p2._1;
+			return A3(
+				_user$project$InputForm_State$ifNotNull,
+				_p2._0,
+				_p2._2,
+				function (txt) {
+					return (_elm_lang$core$Native_Utils.cmp(
+						_elm_lang$core$String$length(txt),
+						_p3) > 0) ? _elm_lang$core$Result$Err(
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							'This field exceeds the maximum amount of ',
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								_elm_lang$core$Basics$toString(_p3),
+								' characters'))) : _elm_lang$core$Result$Ok(
+						{ctor: '_Tuple0'});
+				});
+		case 'DBTimeStamp':
+			return A2(_user$project$InputForm_State$emptyPicker, _p2._0, _p2._1);
+		case 'DBDate':
+			return A2(_user$project$InputForm_State$emptyPicker, _p2._0, _p2._1);
+		case 'DBNumber':
+			var _p5 = _p2._1;
+			if (_p2._0 && _elm_lang$core$String$isEmpty(_p5)) {
+				return _elm_lang$core$Result$Ok(
+					{ctor: '_Tuple0'});
+			} else {
+				var _p4 = _elm_lang$core$String$toInt(_p5);
+				if (_p4.ctor === 'Ok') {
+					return _elm_lang$core$Result$Ok(
+						{ctor: '_Tuple0'});
+				} else {
+					return _elm_lang$core$Result$Err(
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							'Could not convert \"',
+							A2(_elm_lang$core$Basics_ops['++'], _p5, '\" to integer. Please insert a valid number')));
+				}
+			}
+		default:
+			var _p7 = _p2._1;
+			if (_p2._0 && _elm_lang$core$String$isEmpty(_p7)) {
+				return _elm_lang$core$Result$Ok(
+					{ctor: '_Tuple0'});
+			} else {
+				var _p6 = _elm_lang$core$String$toFloat(_p7);
+				if (_p6.ctor === 'Ok') {
+					return _elm_lang$core$Result$Ok(
+						{ctor: '_Tuple0'});
+				} else {
+					return _elm_lang$core$Result$Err(
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							'Could not convert \"',
+							A2(_elm_lang$core$Basics_ops['++'], _p7, '\" to float. Please insert a valid number')));
+				}
+			}
+	}
+};
+var _user$project$InputForm_State$entireFormIsValid = function (form) {
+	return A2(
+		_elm_lang$core$Result$withDefault,
+		false,
+		A2(
+			_elm_lang$core$Result$map,
+			_elm_lang$core$Basics$always(true),
+			A3(
+				_elm_lang$core$List$foldl,
+				F2(
+					function (elValid, outcome) {
+						return A2(
+							_elm_lang$core$Result$andThen,
+							_elm_lang$core$Basics$always(elValid),
+							outcome);
+					}),
+				_elm_lang$core$Result$Ok(
+					{ctor: '_Tuple0'}),
+				A2(
+					_elm_lang$core$List$map,
+					_user$project$InputForm_State$validateType,
+					A2(
+						_elm_lang$core$List$map,
+						function (_p8) {
+							var _p9 = _p8;
+							return _p9._2;
+						},
+						form)))));
+};
 var _user$project$InputForm_State$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$none;
 };
 var _user$project$InputForm_State$getPicker = function (v) {
-	var _p1 = v;
-	switch (_p1.ctor) {
+	var _p10 = v;
+	switch (_p10.ctor) {
 		case 'DBTimeStamp':
-			return _elm_lang$core$Maybe$Just(_p1._1);
+			return _elm_lang$core$Maybe$Just(_p10._1);
 		case 'DBDate':
-			return _elm_lang$core$Maybe$Just(_p1._1);
+			return _elm_lang$core$Maybe$Just(_p10._1);
 		default:
 			return _elm_lang$core$Maybe$Nothing;
 	}
 };
 var _user$project$InputForm_State$updateRecord = F2(
 	function (val, dbType) {
-		var _p2 = dbType;
-		switch (_p2.ctor) {
+		var _p11 = dbType;
+		switch (_p11.ctor) {
 			case 'DBTimeStamp':
 				return dbType;
 			case 'DBDate':
 				return dbType;
 			case 'DBString':
-				return A3(_user$project$InputForm_Types$DBString, _p2._0, _p2._1, val);
+				return A3(_user$project$InputForm_Types$DBString, _p11._0, _p11._1, val);
 			case 'DBNumber':
-				return A2(_user$project$InputForm_Types$DBNumber, _p2._0, val);
+				return A2(_user$project$InputForm_Types$DBNumber, _p11._0, val);
 			default:
-				return A2(_user$project$InputForm_Types$DBFloat, _p2._0, val);
+				return A2(_user$project$InputForm_Types$DBFloat, _p11._0, val);
 		}
 	});
 var _user$project$InputForm_State$updateDatePicker = F2(
 	function (newDatePicker, dbType) {
-		var _p3 = dbType;
-		switch (_p3.ctor) {
+		var _p12 = dbType;
+		switch (_p12.ctor) {
 			case 'DBTimeStamp':
-				return A2(_user$project$InputForm_Types$DBTimeStamp, _p3._0, newDatePicker);
+				return A2(_user$project$InputForm_Types$DBTimeStamp, _p12._0, newDatePicker);
 			case 'DBDate':
-				return A2(_user$project$InputForm_Types$DBDate, _p3._0, newDatePicker);
+				return A2(_user$project$InputForm_Types$DBDate, _p12._0, newDatePicker);
 			default:
 				return dbType;
 		}
 	});
 var _user$project$InputForm_State$tupleMapThird = F2(
-	function (f, _p4) {
-		var _p5 = _p4;
+	function (f, _p13) {
+		var _p14 = _p13;
 		return {
 			ctor: '_Tuple3',
-			_0: _p5._0,
-			_1: _p5._1,
-			_2: f(_p5._2)
+			_0: _p14._0,
+			_1: _p14._1,
+			_2: f(_p14._2)
 		};
 	});
 var _user$project$InputForm_State$update = F2(
 	function (msg, model) {
-		var _p6 = msg;
-		switch (_p6.ctor) {
+		var _p15 = msg;
+		switch (_p15.ctor) {
 			case 'DoNothing':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					model,
 					{ctor: '[]'});
 			case 'ChangeDate':
-				var _p11 = _p6._0;
+				var _p20 = _p15._0;
 				var mPicker = A2(
 					_elm_lang$core$Maybe$andThen,
 					_user$project$InputForm_State$getPicker,
 					A2(
 						_elm_lang$core$Maybe$map,
-						function (_p7) {
-							var _p8 = _p7;
-							return _p8._2;
+						function (_p16) {
+							var _p17 = _p16;
+							return _p17._2;
 						},
-						A2(_elm_community$list_extra$List_Extra$getAt, _p11, model.records)));
-				var _p9 = mPicker;
-				if (_p9.ctor === 'Nothing') {
+						A2(_elm_community$list_extra$List_Extra$getAt, _p20, model.records)));
+				var _p18 = mPicker;
+				if (_p18.ctor === 'Nothing') {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						model,
 						{ctor: '[]'});
 				} else {
-					var _p10 = A2(_elm_community$elm_datepicker$DatePicker$update, _p6._1, _p9._0);
-					var newPicker = _p10._0;
-					var newPickerCmd = _p10._1;
+					var _p19 = A2(_elm_community$elm_datepicker$DatePicker$update, _p15._1, _p18._0);
+					var newPicker = _p19._0;
+					var newPickerCmd = _p19._1;
 					var records = A3(
 						_elm_community$list_extra$List_Extra$updateIfIndex,
 						F2(
 							function (x, y) {
 								return _elm_lang$core$Native_Utils.eq(x, y);
-							})(_p11),
+							})(_p20),
 						_user$project$InputForm_State$tupleMapThird(
 							_user$project$InputForm_State$updateDatePicker(newPicker)),
 						model.records);
@@ -12860,20 +12771,20 @@ var _user$project$InputForm_State$update = F2(
 							ctor: '::',
 							_0: A2(
 								_elm_lang$core$Platform_Cmd$map,
-								_user$project$InputForm_Types$ChangeDate(_p11),
+								_user$project$InputForm_Types$ChangeDate(_p20),
 								newPickerCmd),
 							_1: {ctor: '[]'}
 						});
 				}
-			default:
+			case 'ChangeRecord':
 				var records = A3(
 					_elm_community$list_extra$List_Extra$updateIfIndex,
 					F2(
 						function (x, y) {
 							return _elm_lang$core$Native_Utils.eq(x, y);
-						})(_p6._0),
+						})(_p15._0),
 					_user$project$InputForm_State$tupleMapThird(
-						_user$project$InputForm_State$updateRecord(_p6._1)),
+						_user$project$InputForm_State$updateRecord(_p15._1)),
 					model.records);
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
@@ -12881,13 +12792,455 @@ var _user$project$InputForm_State$update = F2(
 						model,
 						{records: records}),
 					{ctor: '[]'});
+			default:
+				return _user$project$InputForm_State$entireFormIsValid(model.records) ? A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{
+							submission: _krisajenkins$remotedata$RemoteData$Success(
+								{ctor: '_Tuple0'})
+						}),
+					{ctor: '[]'}) : A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{validate: true}),
+					{ctor: '[]'});
 		}
 	});
-var _user$project$InputForm_State$init = function (_p12) {
+var _user$project$InputForm_State$init = function (_p21) {
 	return A2(
 		_elm_lang$core$Platform_Cmd_ops['!'],
-		{records: _user$project$InputForm_State$form, validate: true},
+		{records: _user$project$InputForm_State$form, validate: false, submission: _krisajenkins$remotedata$RemoteData$NotAsked},
 		{ctor: '[]'});
+};
+
+var _user$project$InputForm_FlashMessages$jsonToHtml = function (txt) {
+	return A2(
+		_elm_lang$core$List$intersperse,
+		A2(
+			_elm_lang$html$Html$br,
+			{ctor: '[]'},
+			{ctor: '[]'}),
+		A2(
+			_elm_lang$core$List$map,
+			_elm_lang$html$Html$text,
+			A3(
+				_elm_lang$core$Regex$split,
+				_elm_lang$core$Regex$All,
+				_elm_lang$core$Regex$regex('\n'),
+				txt)));
+};
+var _user$project$InputForm_FlashMessages$loading = A2(
+	_elm_lang$html$Html$div,
+	{
+		ctor: '::',
+		_0: _elm_lang$html$Html_Attributes$class('alert alert-info alert-dismissable text-center'),
+		_1: {ctor: '[]'}
+	},
+	{
+		ctor: '::',
+		_0: A2(
+			_elm_lang$html$Html$i,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('fa fa-circle-o-notch fa-spin'),
+				_1: {ctor: '[]'}
+			},
+			{ctor: '[]'}),
+		_1: {ctor: '[]'}
+	});
+var _user$project$InputForm_FlashMessages$failure = function (message) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('alert alert-danger'),
+			_1: {ctor: '[]'}
+		},
+		_user$project$InputForm_FlashMessages$jsonToHtml(message));
+};
+var _user$project$InputForm_FlashMessages$success = function (message) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('alert alert-success'),
+			_1: {ctor: '[]'}
+		},
+		_user$project$InputForm_FlashMessages$jsonToHtml(message));
+};
+
+var _user$project$InputForm_View$formTitle = F2(
+	function (txt, content) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('form-group'),
+				_1: {ctor: '[]'}
+			},
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$label,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text(txt),
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				},
+				content));
+	});
+var _user$project$InputForm_View$textAreaField = F3(
+	function (placeholderTxt, contentTxt, onInputMsg) {
+		return A2(
+			_elm_lang$html$Html$textarea,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('form-control'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$style(
+						{
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'min-height', _1: '34px'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'height', _1: 'auto'},
+								_1: {ctor: '[]'}
+							}
+						}),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$placeholder(placeholderTxt),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$rows(4),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$value(contentTxt),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$html$Html_Events$onInput(onInputMsg),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}
+				}
+			},
+			{ctor: '[]'});
+	});
+var _user$project$InputForm_View$inputField = F3(
+	function (placeholderTxt, contentTxt, onInputMsg) {
+		return A2(
+			_elm_lang$html$Html$input,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('form-control'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$style(
+						{
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'min-height', _1: '34px'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'height', _1: 'auto'},
+								_1: {ctor: '[]'}
+							}
+						}),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$type_('text'),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$value(contentTxt),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$placeholder(placeholderTxt),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$html$Html_Events$onInput(onInputMsg),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}
+				}
+			},
+			{ctor: '[]'});
+	});
+var _user$project$InputForm_View$formField = F3(
+	function (idx, placeholder, v) {
+		var _p0 = v;
+		switch (_p0.ctor) {
+			case 'DBString':
+				return A3(
+					_user$project$InputForm_View$inputField,
+					placeholder,
+					_p0._2,
+					_user$project$InputForm_Types$ChangeRecord(idx));
+			case 'DBTimeStamp':
+				return A2(
+					_elm_lang$html$Html$map,
+					_user$project$InputForm_Types$ChangeDate(idx),
+					_elm_community$elm_datepicker$DatePicker$view(_p0._1));
+			case 'DBDate':
+				return A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$style(
+							{
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'cursor', _1: 'pointer'},
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$map,
+							_user$project$InputForm_Types$ChangeDate(idx),
+							_elm_community$elm_datepicker$DatePicker$view(_p0._1)),
+						_1: {ctor: '[]'}
+					});
+			case 'DBNumber':
+				return A3(
+					_user$project$InputForm_View$inputField,
+					'Type a number here',
+					_p0._1,
+					_user$project$InputForm_Types$ChangeRecord(idx));
+			default:
+				return A3(
+					_user$project$InputForm_View$inputField,
+					'Type a number here',
+					_p0._1,
+					_user$project$InputForm_Types$ChangeRecord(idx));
+		}
+	});
+var _user$project$InputForm_View$renderFormItem = F3(
+	function (validate, idx, _p1) {
+		var _p2 = _p1;
+		var _p5 = _p2._2;
+		var _p4 = _p2._1;
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('col-md-6'),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_user$project$InputForm_View$formTitle,
+					_p4,
+					{
+						ctor: '::',
+						_0: A3(_user$project$InputForm_View$formField, idx, _p4, _p5),
+						_1: {
+							ctor: '::',
+							_0: function () {
+								if (validate) {
+									var _p3 = _user$project$InputForm_State$validateType(_p5);
+									if (_p3.ctor === 'Ok') {
+										return _elm_lang$html$Html$text('');
+									} else {
+										return A2(
+											_elm_lang$html$Html$span,
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html_Attributes$class('text-danger'),
+												_1: {ctor: '[]'}
+											},
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html$text(_p3._0),
+												_1: {ctor: '[]'}
+											});
+									}
+								} else {
+									return _elm_lang$html$Html$text('');
+								}
+							}(),
+							_1: {ctor: '[]'}
+						}
+					}),
+				_1: {ctor: '[]'}
+			});
+	});
+var _user$project$InputForm_View$renderForm = F2(
+	function (validate, records) {
+		var toPairs = F2(
+			function (newElement, _p6) {
+				var _p7 = _p6;
+				var _p9 = _p7._0;
+				var _p8 = _p7._1;
+				return _elm_lang$core$List$isEmpty(_p8) ? {
+					ctor: '_Tuple2',
+					_0: _p9,
+					_1: {
+						ctor: '::',
+						_0: newElement,
+						_1: {ctor: '[]'}
+					}
+				} : {
+					ctor: '_Tuple2',
+					_0: {
+						ctor: '::',
+						_0: {ctor: '::', _0: newElement, _1: _p8},
+						_1: _p9
+					},
+					_1: {ctor: '[]'}
+				};
+			});
+		return A2(
+			_elm_lang$html$Html$div,
+			{ctor: '[]'},
+			A2(
+				_elm_lang$core$List$map,
+				_elm_lang$html$Html$div(
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('row'),
+						_1: {ctor: '[]'}
+					}),
+				_elm_lang$core$Tuple$first(
+					A3(
+						_elm_lang$core$List$foldr,
+						toPairs,
+						{
+							ctor: '_Tuple2',
+							_0: {ctor: '[]'},
+							_1: {ctor: '[]'}
+						},
+						A2(
+							_elm_lang$core$List$indexedMap,
+							_user$project$InputForm_View$renderFormItem(validate),
+							records)))));
+	});
+var _user$project$InputForm_View$validationWarning = F2(
+	function (validate, form) {
+		return (validate && (!_user$project$InputForm_State$entireFormIsValid(form))) ? _user$project$InputForm_FlashMessages$failure('There are errors in the form. Please correct them before submission') : _elm_lang$html$Html$text('');
+	});
+var _user$project$InputForm_View$httpErrorMessage = function (error) {
+	var _p10 = error;
+	switch (_p10.ctor) {
+		case 'BadUrl':
+			return A2(_elm_lang$core$Basics_ops['++'], 'Invalid url: ', _p10._0);
+		case 'Timeout':
+			return 'The server didn\'t respond on time. Please try again';
+		case 'NetworkError':
+			return 'Unable to connect to server';
+		case 'BadPayload':
+			return A2(_elm_lang$core$Basics_ops['++'], 'Unable to parse server response: ', _p10._0);
+		default:
+			var _p11 = _p10._0.status;
+			return A2(
+				_elm_lang$core$Basics_ops['++'],
+				'Server returned ',
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					_elm_lang$core$Basics$toString(_p11.code),
+					A2(_elm_lang$core$Basics_ops['++'], '. ', _p11.message)));
+	}
+};
+var _user$project$InputForm_View$submissionInfo = F2(
+	function (successMesssage, submission) {
+		var _p12 = submission;
+		switch (_p12.ctor) {
+			case 'NotAsked':
+				return A2(
+					_elm_lang$html$Html$div,
+					{ctor: '[]'},
+					{ctor: '[]'});
+			case 'Loading':
+				return _user$project$InputForm_FlashMessages$loading;
+			case 'Success':
+				return _user$project$InputForm_FlashMessages$success(successMesssage);
+			default:
+				return _user$project$InputForm_FlashMessages$failure(
+					_user$project$InputForm_View$httpErrorMessage(_p12._0));
+		}
+	});
+var _user$project$InputForm_View$root = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('clearfix'),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$button,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$class('btn btn-info pull-right'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Events$onClick(_user$project$InputForm_Types$Submit),
+								_1: {ctor: '[]'}
+							}
+						},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('Submit'),
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$h4,
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text('Data Input'),
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('widget-simple-chart card-box'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: A2(_user$project$InputForm_View$submissionInfo, 'Data saved successfully.', model.submission),
+						_1: {
+							ctor: '::',
+							_0: A2(_user$project$InputForm_View$validationWarning, model.validate, model.records),
+							_1: {
+								ctor: '::',
+								_0: A2(_user$project$InputForm_View$renderForm, model.validate, model.records),
+								_1: {ctor: '[]'}
+							}
+						}
+					}),
+				_1: {ctor: '[]'}
+			}
+		});
 };
 
 var _user$project$InputForm$main = _elm_lang$html$Html$programWithFlags(

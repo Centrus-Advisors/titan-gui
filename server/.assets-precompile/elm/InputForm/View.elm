@@ -1,15 +1,79 @@
 module InputForm.View exposing (root)
 
 import InputForm.Types exposing (..)
+import InputForm.State exposing (entireFormIsValid, validateType)
 import Html exposing (Html, div, a, text, button, small, label, p, input, h4, select, option, textarea, span)
 import Html.Attributes exposing (disabled, class, checked, type_, name, placeholder, href, style, value, selected, rows)
 import Html.Events exposing (onClick, onInput, on, targetValue)
-import RemoteData
+import RemoteData exposing (RemoteData)
 import DatePicker
+import InputForm.FlashMessages as FlashMessages
+import Http
 
 
 root : Model -> Html Msg
 root model =
+    div []
+        [ div [ class "clearfix" ]
+            [ button
+                [ class "btn btn-info pull-right"
+                , onClick Submit
+                ]
+                [ text "Submit" ]
+            , h4 [] [ text "Data Input" ]
+            ]
+        , div
+            [ class "widget-simple-chart card-box" ]
+            [ submissionInfo "Data saved successfully." model.submission
+            , validationWarning model.validate model.records
+            , renderForm model.validate model.records
+            ]
+        ]
+
+
+submissionInfo : String -> RemoteData Http.Error a -> Html msg
+submissionInfo successMesssage submission =
+    case submission of
+        RemoteData.NotAsked ->
+            div [] []
+
+        RemoteData.Loading ->
+            FlashMessages.loading
+
+        RemoteData.Success c ->
+            FlashMessages.success successMesssage
+
+        RemoteData.Failure err ->
+            FlashMessages.failure (httpErrorMessage err)
+
+
+httpErrorMessage : Http.Error -> String
+httpErrorMessage error =
+    case error of
+        Http.BadUrl wrongUrl ->
+            "Invalid url: " ++ wrongUrl
+
+        Http.Timeout ->
+            "The server didn't respond on time. Please try again"
+
+        Http.NetworkError ->
+            "Unable to connect to server"
+
+        Http.BadPayload errMessage { status } ->
+            "Unable to parse server response: " ++ errMessage
+
+        Http.BadStatus { status, body } ->
+            "Server returned " ++ (toString status.code) ++ ". " ++ status.message
+
+
+validationWarning validate form =
+    if validate && not (entireFormIsValid form) then
+        FlashMessages.failure "There are errors in the form. Please correct them before submission"
+    else
+        text ""
+
+
+renderForm validate records =
     let
         toPairs newElement ( pairs, newPair ) =
             if List.isEmpty newPair then
@@ -17,7 +81,7 @@ root model =
             else
                 ( (newElement :: newPair) :: pairs, [] )
     in
-        List.indexedMap (renderFormItem model.validate) model.records
+        List.indexedMap (renderFormItem validate) records
             |> List.foldr toPairs ( [], [] )
             |> Tuple.first
             |> List.map (div [ class "row" ])
@@ -63,73 +127,6 @@ formField idx placeholder v =
 
         DBFloat nullable val ->
             inputField "Type a number here" val (ChangeRecord idx)
-
-
-
---------------
--- Form fields
---------------
-
-
-validateType : DBType -> Result String ()
-validateType v =
-    case v of
-        DBString nullable maxLen val ->
-            ifNotNull nullable
-                val
-                (\txt ->
-                    if String.length txt > maxLen then
-                        Err <| "This field exceeds the maximum amount of " ++ (toString maxLen) ++ " characters"
-                    else
-                        Ok ()
-                )
-
-        DBTimeStamp nullable datePicker ->
-            emptyPicker nullable datePicker
-
-        DBDate nullable datePicker ->
-            emptyPicker nullable datePicker
-
-        DBNumber nullable val ->
-            if nullable && String.isEmpty val then
-                Ok ()
-            else
-                case String.toInt val of
-                    Ok _ ->
-                        Ok ()
-
-                    Err _ ->
-                        Err <| "Could not convert \"" ++ val ++ "\" to integer. Please insert a valid number"
-
-        DBFloat nullable val ->
-            if nullable && String.isEmpty val then
-                Ok ()
-            else
-                case String.toFloat val of
-                    Ok _ ->
-                        Ok ()
-
-                    Err _ ->
-                        Err <| "Could not convert \"" ++ val ++ "\" to float. Please insert a valid number"
-
-
-ifNotNull canBeNull val f =
-    if String.isEmpty val && not canBeNull then
-        Err "This field cannot be empty"
-    else
-        f val
-
-
-emptyPicker nullable datePicker =
-    case DatePicker.getDate datePicker of
-        Just aDate ->
-            Ok ()
-
-        Nothing ->
-            if nullable then
-                Ok ()
-            else
-                Err "This field cannot be empty. Please choose a date"
 
 
 

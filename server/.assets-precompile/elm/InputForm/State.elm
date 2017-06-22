@@ -1,4 +1,4 @@
-port module InputForm.State exposing (init, update, subscriptions)
+module InputForm.State exposing (init, update, subscriptions, validateType, entireFormIsValid)
 
 import InputForm.Types exposing (..)
 import RemoteData
@@ -10,7 +10,8 @@ import List.Extra
 init : { todayDate : Time } -> ( Model, Cmd Msg )
 init _ =
     { records = form
-    , validate = True
+    , validate = False
+    , submission = RemoteData.NotAsked
     }
         ! []
 
@@ -56,6 +57,12 @@ update msg model =
                         model.records
             in
                 { model | records = records } ! []
+
+        Submit ->
+            if entireFormIsValid model.records then
+                { model | submission = RemoteData.Success () } ! []
+            else
+                { model | validate = True } ! []
 
 
 tupleMapThird : (c -> c) -> ( a, b, c ) -> ( a, b, c )
@@ -110,6 +117,83 @@ getPicker v =
 
 subscriptions model =
     Sub.none
+
+
+
+--------------
+-- Form fields
+--------------
+
+
+entireFormIsValid : List ( String, String, DBType ) -> Bool
+entireFormIsValid form =
+    form
+        |> List.map (\( a, b, c ) -> c)
+        |> List.map validateType
+        |> List.foldl (\elValid outcome -> Result.andThen (always elValid) outcome) (Ok ())
+        |> Result.map (always True)
+        |> Result.withDefault False
+
+
+validateType : DBType -> Result String ()
+validateType v =
+    case v of
+        DBString nullable maxLen val ->
+            ifNotNull nullable
+                val
+                (\txt ->
+                    if String.length txt > maxLen then
+                        Err <| "This field exceeds the maximum amount of " ++ (toString maxLen) ++ " characters"
+                    else
+                        Ok ()
+                )
+
+        DBTimeStamp nullable datePicker ->
+            emptyPicker nullable datePicker
+
+        DBDate nullable datePicker ->
+            emptyPicker nullable datePicker
+
+        DBNumber nullable val ->
+            if nullable && String.isEmpty val then
+                Ok ()
+            else
+                case String.toInt val of
+                    Ok _ ->
+                        Ok ()
+
+                    Err _ ->
+                        Err <| "Could not convert \"" ++ val ++ "\" to integer. Please insert a valid number"
+
+        DBFloat nullable val ->
+            if nullable && String.isEmpty val then
+                Ok ()
+            else
+                case String.toFloat val of
+                    Ok _ ->
+                        Ok ()
+
+                    Err _ ->
+                        Err <| "Could not convert \"" ++ val ++ "\" to float. Please insert a valid number"
+
+
+ifNotNull canBeNull val f =
+    if String.isEmpty val && not canBeNull then
+        Err "This field cannot be empty"
+    else
+        f val
+
+
+emptyPicker nullable datePicker =
+    case DatePicker.getDate datePicker of
+        Just aDate ->
+            Ok ()
+
+        Nothing ->
+            if nullable then
+                Ok ()
+            else
+                Err "This field cannot be empty. Please choose a date"
 
 
 form =

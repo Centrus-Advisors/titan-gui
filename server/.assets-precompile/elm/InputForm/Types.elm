@@ -8,6 +8,7 @@ import DatePicker exposing (DatePicker)
 type alias Model =
     { records : List ( String, String, DBType )
     , validate : Bool
+    , submission : WebData ()
     }
 
 
@@ -19,6 +20,7 @@ type Msg
     = DoNothing
     | ChangeDate Index DatePicker.Msg
     | ChangeRecord Index String
+    | Submit
 
 
 type alias MaxLength =
