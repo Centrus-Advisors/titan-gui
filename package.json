@@ -1,0 +1,8 @@
+{
+  "name": "titan-gui",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": {},
+  "author": "Marcelo Lazaroni <lazaronijunior@gmail.com>",
+  "license": "MIT"
+}
