@@ -2,13 +2,11 @@ require("dotenv").config({ path: "./_env/.env" });
 const Future = require("ramda-fantasy").Future;
 const logger = require("./server/lib/logger");
 const app = require("./server")({
-    logRequests: true
+    logRequests: false
 });
 
 const PORT = 8080;
-const server = app.listen(PORT, () =>
-    logger.info(`Centrus CRM listening on port ${PORT}`)
-);
+const server = app.listen(PORT, () => logger.info(`Centrus CRM listening on port ${PORT}`));
 
 // Make sure we finish connections on SIGTERM
 process.on("SIGTERM", () => {
