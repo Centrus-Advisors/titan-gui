@@ -21,6 +21,9 @@ organiser.registerAll("./tasks", {
             ext: "js"
         }
     },
+    "jasmine-test-node": {
+        src: ["tests/**/*"]
+    },
     build: {
         src: ".",
         tasks: ["build-elm"]
