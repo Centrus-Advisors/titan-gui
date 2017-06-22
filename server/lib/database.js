@@ -1,4 +1,5 @@
-const parse = require("csv-parse");
+const csvparse = require("csv-parse");
+const csvstringify = require("csv-stringify");
 const fs = require("fs");
 const { Future, Either } = require("ramda-fantasy");
 const { traverse } = require("ramda");
@@ -37,7 +38,7 @@ const TYPES = {
             if (typeof val !== "number") {
                 return required ? Either.Left("Int value required and not set.") : Either.Right("");
             }
-            return Either.Right(toString(val));
+            return Either.Right(val.toString());
         },
         decode: val => {
             const parsed = parseInt(val, 10);
@@ -53,7 +54,7 @@ const TYPES = {
             if (typeof val !== "number") {
                 return required ? Either.Left("Int value required and not set.") : Either.Right("");
             }
-            return Either.Right(toString(val));
+            return Either.Right(val.toString());
         },
         decode: val => {
             const parsed = parseFloat(val, 10);
@@ -117,29 +118,39 @@ const TABLESCHEMA = [
     { name: "Salary", type: TYPES.FLOAT(true) }
 ];
 
-const parseCell = (cellSchema, value) => {
+const processCell = (method, cellSchema, value) => {
     if (!cellSchema) {
         return Either.Left(`No schema found for cell with value "${value}"`);
     }
 
-    const parsed = cellSchema.type.decode(value);
+    const parsed = cellSchema.type[method](value);
     return parsed.bimap(err => `${cellSchema.name}: ${err}`, a => a);
 };
 
 // Either [val]
-const parseRow = (schema, row) => {
+const processRow = (method, schema, row) => {
     const arrayOfEithers = row.map((cell, cellIndex) =>
-        parseCell(schema[cellIndex], cell).bimap(err => `${cellIndex}: ${err}`, a => a)
+        processCell(method, schema[cellIndex], cell).bimap(err => `${cellIndex}: ${err}`, a => a)
     );
     return traverse(Either.of, a => a, arrayOfEithers);
 };
 
-const conformToSchema = (schema, rows) => {
+const eitherToFuture = e => Future((reject, resolve) => e.bimap(reject, resolve));
+// Future
+const processTable = (method, schema, rows) => {
     const arrayOfEithers = rows.map((row, rowIndex) =>
-        parseRow(schema, row).bimap(err => `${rowIndex}:${err}`, a => a)
+        processRow(method, schema, row).bimap(err => `${rowIndex}:${err}`, a => a)
     );
-    return traverse(Either.of, a => a, arrayOfEithers);
+
+    const processed = traverse(Either.of, a => a, arrayOfEithers);
+    return eitherToFuture(processed);
 };
+
+const decodeTable = schema => rows => processTable("decode", schema, rows);
+
+const encodeTable = schema => rows => processTable("encode", schema, rows);
+
+const addHeaders = schema => rows => [schema.map(s => s.name)].concat(rows);
 
 // ============================================================================
 const readFile = filePath =>
@@ -147,21 +158,33 @@ const readFile = filePath =>
         fs.readFile(filePath, (err, data) => (err ? reject(err) : resolve(data)))
     );
 
+const writeFile = filePath => fileContent =>
+    Future((reject, resolve) => {
+        fs.writeFile(filePath, fileContent, err => (err ? reject(err) : resolve()));
+    });
+
 const parseCsv = input =>
     Future((reject, resolve) =>
-        parse(input, (err, output) => (err ? reject(err) : resolve(output)))
+        csvparse(input, (err, output) => (err ? reject(err) : resolve(output)))
     );
+
+const stringifyCsv = input =>
+    Future((reject, resolve) => {
+        csvstringify(input, (err, output) => (err ? reject(err) : resolve(output)));
+    });
+
 const removeHeaders = input => input.slice(1);
 
 const getAll = filePath =>
-    readFile(filePath).chain(parseCsv).map(removeHeaders).chain(rows =>
-        Future((reject, resolve) => {
-            const output = conformToSchema(TABLESCHEMA, rows);
-            output.either(reject, resolve);
-        })
-    );
+    readFile(filePath).chain(parseCsv).map(removeHeaders).chain(decodeTable(TABLESCHEMA));
 
-const add = () => {};
+const add = (filePath, newRow) =>
+    getAll(filePath)
+        .map(rows => rows.concat([newRow]))
+        .chain(encodeTable(TABLESCHEMA))
+        .map(addHeaders(TABLESCHEMA))
+        .chain(stringifyCsv)
+        .chain(writeFile(filePath));
 
 module.exports = {
     getAll,
