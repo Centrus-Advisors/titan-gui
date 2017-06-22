@@ -1,6 +1,5 @@
 /* eslint-disable no-param-reassign*/
 const purifier = require("root-require")("./server/lib/routePurifier");
-const path = require("path");
 
 // Load files in this folder apart from "index.js"
 const routes = require("require-dir-all")(".", {
