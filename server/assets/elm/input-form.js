@@ -14384,472 +14384,481 @@ var _user$project$InputForm_Rest$save = function (body) {
 		A3(_user$project$InputForm_Rest$post, _user$project$InputForm_Rest$tradeDecoder, _user$project$InputForm_Rest$dataEndpoint, body));
 };
 
-var _user$project$InputForm_State$initialDbDate = function (dateFormat) {
+var _user$project$InputForm_State$initialDbDate = function (todayDate) {
 	var defaultSettings = _elm_community$elm_datepicker$DatePicker$defaultSettings;
 	var _p0 = _elm_community$elm_datepicker$DatePicker$init(
 		_elm_lang$core$Native_Utils.update(
 			defaultSettings,
 			{
-				pickedDate: _elm_lang$core$Maybe$Nothing,
+				pickedDate: _elm_lang$core$Maybe$Just(
+					_elm_lang$core$Date$fromTime(todayDate)),
 				inputClassList: {
 					ctor: '::',
 					_0: {ctor: '_Tuple2', _0: 'form-control', _1: true},
 					_1: {ctor: '[]'}
 				},
-				dateFormatter: _justinmimbs$elm_date_extra$Date_Extra$toFormattedString(dateFormat)
+				dateFormatter: _justinmimbs$elm_date_extra$Date_Extra$toFormattedString('yyyy-MM-dd')
 			}));
 	var picker = _p0._0;
 	var pickerCmd = _p0._1;
 	return picker;
 };
-var _user$project$InputForm_State$form = {
-	ctor: '::',
-	_0: {
-		ctor: '_Tuple3',
-		_0: 'RECORD_TYPE',
-		_1: 'Record Type',
-		_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
-	},
-	_1: {
+var _user$project$InputForm_State$initForm = function (todayDate) {
+	return {
 		ctor: '::',
 		_0: {
 			ctor: '_Tuple3',
-			_0: 'PRODUCT',
-			_1: 'Product',
+			_0: 'RECORD_TYPE',
+			_1: 'Record Type',
 			_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
 		},
 		_1: {
 			ctor: '::',
 			_0: {
 				ctor: '_Tuple3',
-				_0: 'TRADE_ID',
-				_1: 'Trade Id',
-				_2: A3(_user$project$InputForm_Types$DBString, false, 50, '')
+				_0: 'PRODUCT',
+				_1: 'Product',
+				_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
 			},
 			_1: {
 				ctor: '::',
 				_0: {
 					ctor: '_Tuple3',
-					_0: 'ROLE',
-					_1: 'Role',
-					_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
+					_0: 'TRADE_ID',
+					_1: 'Trade Id',
+					_2: A3(_user$project$InputForm_Types$DBString, false, 50, '')
 				},
 				_1: {
 					ctor: '::',
 					_0: {
 						ctor: '_Tuple3',
-						_0: 'TRADER_NAME',
-						_1: 'Trader Name',
+						_0: 'ROLE',
+						_1: 'Role',
 						_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
 					},
 					_1: {
 						ctor: '::',
 						_0: {
 							ctor: '_Tuple3',
-							_0: 'TRADER_DESK_CODE',
-							_1: 'Trader Desk Code',
+							_0: 'TRADER_NAME',
+							_1: 'Trader Name',
 							_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
 						},
 						_1: {
 							ctor: '::',
 							_0: {
 								ctor: '_Tuple3',
-								_0: 'TRADER_COMPANY',
-								_1: 'Trader Company',
-								_2: A3(_user$project$InputForm_Types$DBString, true, 57, '')
+								_0: 'TRADER_DESK_CODE',
+								_1: 'Trader Desk Code',
+								_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
 							},
 							_1: {
 								ctor: '::',
 								_0: {
 									ctor: '_Tuple3',
-									_0: 'COUNTERPARTY_NAME',
-									_1: 'Counterparty Name',
-									_2: A3(_user$project$InputForm_Types$DBString, true, 53, '')
+									_0: 'TRADER_COMPANY',
+									_1: 'Trader Company',
+									_2: A3(_user$project$InputForm_Types$DBString, true, 57, '')
 								},
 								_1: {
 									ctor: '::',
 									_0: {
 										ctor: '_Tuple3',
-										_0: 'COUNTERPARTY_DESK_CODE',
-										_1: 'Counterparty Desk Code',
-										_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
+										_0: 'COUNTERPARTY_NAME',
+										_1: 'Counterparty Name',
+										_2: A3(_user$project$InputForm_Types$DBString, true, 53, '')
 									},
 									_1: {
 										ctor: '::',
 										_0: {
 											ctor: '_Tuple3',
-											_0: 'COUNTERPARTY_COMPANY',
-											_1: 'Counterparty Company',
-											_2: A3(_user$project$InputForm_Types$DBString, true, 57, '')
+											_0: 'COUNTERPARTY_DESK_CODE',
+											_1: 'Counterparty Desk Code',
+											_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
 										},
 										_1: {
 											ctor: '::',
 											_0: {
 												ctor: '_Tuple3',
-												_0: 'DEAL_DATE_TIME',
-												_1: 'Deal Date Time',
-												_2: A2(_user$project$InputForm_Types$DBTimeStamp, false, '')
+												_0: 'COUNTERPARTY_COMPANY',
+												_1: 'Counterparty Company',
+												_2: A3(_user$project$InputForm_Types$DBString, true, 57, '')
 											},
 											_1: {
 												ctor: '::',
 												_0: {
 													ctor: '_Tuple3',
-													_0: 'TRADE_DATE',
-													_1: 'Trade Date',
+													_0: 'DEAL_DATE_TIME',
+													_1: 'Deal Date Time',
 													_2: A2(
-														_user$project$InputForm_Types$DBDate,
+														_user$project$InputForm_Types$DBTimeStamp,
 														false,
-														_user$project$InputForm_State$initialDbDate('yyyy-mm-dd'))
+														A2(
+															_justinmimbs$elm_date_extra$Date_Extra$toFormattedString,
+															'yyyy-mm-dd HH:mm:ss',
+															_elm_lang$core$Date$fromTime(todayDate)))
 												},
 												_1: {
 													ctor: '::',
 													_0: {
 														ctor: '_Tuple3',
-														_0: 'START_DATE',
-														_1: 'Start Date',
+														_0: 'TRADE_DATE',
+														_1: 'Trade Date',
 														_2: A2(
 															_user$project$InputForm_Types$DBDate,
-															true,
-															_user$project$InputForm_State$initialDbDate('yyyy-mm-dd'))
+															false,
+															_user$project$InputForm_State$initialDbDate(todayDate))
 													},
 													_1: {
 														ctor: '::',
 														_0: {
 															ctor: '_Tuple3',
-															_0: 'TERMINATION_DATE',
-															_1: 'Termination Date',
+															_0: 'START_DATE',
+															_1: 'Start Date',
 															_2: A2(
 																_user$project$InputForm_Types$DBDate,
 																true,
-																_user$project$InputForm_State$initialDbDate('yyyy-mm-dd'))
+																_user$project$InputForm_State$initialDbDate(todayDate))
 														},
 														_1: {
 															ctor: '::',
 															_0: {
 																ctor: '_Tuple3',
-																_0: 'SIDE',
-																_1: 'Side',
-																_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
+																_0: 'TERMINATION_DATE',
+																_1: 'Termination Date',
+																_2: A2(
+																	_user$project$InputForm_Types$DBDate,
+																	true,
+																	_user$project$InputForm_State$initialDbDate(todayDate))
 															},
 															_1: {
 																ctor: '::',
 																_0: {
 																	ctor: '_Tuple3',
-																	_0: 'TICKER',
-																	_1: 'Ticker',
-																	_2: A3(_user$project$InputForm_Types$DBString, true, 56, '')
+																	_0: 'SIDE',
+																	_1: 'Side',
+																	_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
 																},
 																_1: {
 																	ctor: '::',
 																	_0: {
 																		ctor: '_Tuple3',
-																		_0: 'SECURITY_DESC',
-																		_1: 'Security Desc',
-																		_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
+																		_0: 'TICKER',
+																		_1: 'Ticker',
+																		_2: A3(_user$project$InputForm_Types$DBString, true, 56, '')
 																	},
 																	_1: {
 																		ctor: '::',
 																		_0: {
 																			ctor: '_Tuple3',
-																			_0: 'TRADE_TYPE',
-																			_1: 'Trade Type',
+																			_0: 'SECURITY_DESC',
+																			_1: 'Security Desc',
 																			_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
 																		},
 																		_1: {
 																			ctor: '::',
 																			_0: {
 																				ctor: '_Tuple3',
-																				_0: 'LEG_NUMBER',
-																				_1: 'Leg Number',
+																				_0: 'TRADE_TYPE',
+																				_1: 'Trade Type',
 																				_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
 																			},
 																			_1: {
 																				ctor: '::',
 																				_0: {
 																					ctor: '_Tuple3',
-																					_0: 'IDENTIFIER',
-																					_1: 'Identifier',
+																					_0: 'LEG_NUMBER',
+																					_1: 'Leg Number',
 																					_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
 																				},
 																				_1: {
 																					ctor: '::',
 																					_0: {
 																						ctor: '_Tuple3',
-																						_0: 'CALCULATION_TYPE',
-																						_1: 'Calculation Type',
+																						_0: 'IDENTIFIER',
+																						_1: 'Identifier',
 																						_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
 																					},
 																					_1: {
 																						ctor: '::',
 																						_0: {
 																							ctor: '_Tuple3',
-																							_0: 'FLOATING_REF_PRICE',
-																							_1: 'Floating Ref Price',
+																							_0: 'CALCULATION_TYPE',
+																							_1: 'Calculation Type',
 																							_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
 																						},
 																						_1: {
 																							ctor: '::',
 																							_0: {
 																								ctor: '_Tuple3',
-																								_0: 'QUANTITY',
-																								_1: 'Quantity',
-																								_2: A2(_user$project$InputForm_Types$DBNumber, true, '')
+																								_0: 'FLOATING_REF_PRICE',
+																								_1: 'Floating Ref Price',
+																								_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
 																							},
 																							_1: {
 																								ctor: '::',
 																								_0: {
 																									ctor: '_Tuple3',
-																									_0: 'QUANTITY_UNIT',
-																									_1: 'Quantity Unit',
-																									_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
+																									_0: 'QUANTITY',
+																									_1: 'Quantity',
+																									_2: A2(_user$project$InputForm_Types$DBNumber, true, '')
 																								},
 																								_1: {
 																									ctor: '::',
 																									_0: {
 																										ctor: '_Tuple3',
-																										_0: 'PERIODICITY',
-																										_1: 'Periodicity',
+																										_0: 'QUANTITY_UNIT',
+																										_1: 'Quantity Unit',
 																										_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
 																									},
 																									_1: {
 																										ctor: '::',
 																										_0: {
 																											ctor: '_Tuple3',
-																											_0: 'FIXED_PRICE',
-																											_1: 'Fixed Price',
-																											_2: A2(_user$project$InputForm_Types$DBFloat, true, '')
+																											_0: 'PERIODICITY',
+																											_1: 'Periodicity',
+																											_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
 																										},
 																										_1: {
 																											ctor: '::',
 																											_0: {
 																												ctor: '_Tuple3',
-																												_0: 'CURRENCY',
-																												_1: 'Currency',
-																												_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
+																												_0: 'FIXED_PRICE',
+																												_1: 'Fixed Price',
+																												_2: A2(_user$project$InputForm_Types$DBFloat, true, '')
 																											},
 																											_1: {
 																												ctor: '::',
 																												_0: {
 																													ctor: '_Tuple3',
-																													_0: 'PRICE_IN',
-																													_1: 'Price In',
+																													_0: 'CURRENCY',
+																													_1: 'Currency',
 																													_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
 																												},
 																												_1: {
 																													ctor: '::',
 																													_0: {
 																														ctor: '_Tuple3',
-																														_0: 'NEAR_LEG_FIXED_PRICE',
-																														_1: 'Near Leg Fixed Price',
-																														_2: A2(_user$project$InputForm_Types$DBNumber, true, '')
+																														_0: 'PRICE_IN',
+																														_1: 'Price In',
+																														_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
 																													},
 																													_1: {
 																														ctor: '::',
 																														_0: {
 																															ctor: '_Tuple3',
-																															_0: 'MID_PRICE',
-																															_1: 'Mid Price',
+																															_0: 'NEAR_LEG_FIXED_PRICE',
+																															_1: 'Near Leg Fixed Price',
 																															_2: A2(_user$project$InputForm_Types$DBNumber, true, '')
 																														},
 																														_1: {
 																															ctor: '::',
 																															_0: {
 																																ctor: '_Tuple3',
-																																_0: 'NOTIONAL',
-																																_1: 'Notional',
+																																_0: 'MID_PRICE',
+																																_1: 'Mid Price',
 																																_2: A2(_user$project$InputForm_Types$DBNumber, true, '')
 																															},
 																															_1: {
 																																ctor: '::',
 																																_0: {
 																																	ctor: '_Tuple3',
-																																	_0: 'SETTLEMENT_DATE',
-																																	_1: 'Settlement Date',
-																																	_2: A2(
-																																		_user$project$InputForm_Types$DBDate,
-																																		true,
-																																		_user$project$InputForm_State$initialDbDate('yyyy-mm-dd'))
+																																	_0: 'NOTIONAL',
+																																	_1: 'Notional',
+																																	_2: A2(_user$project$InputForm_Types$DBNumber, true, '')
 																																},
 																																_1: {
 																																	ctor: '::',
 																																	_0: {
 																																		ctor: '_Tuple3',
-																																		_0: 'SETTLEMENT_CCY',
-																																		_1: 'Settlement Ccy',
-																																		_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
+																																		_0: 'SETTLEMENT_DATE',
+																																		_1: 'Settlement Date',
+																																		_2: A2(
+																																			_user$project$InputForm_Types$DBDate,
+																																			true,
+																																			_user$project$InputForm_State$initialDbDate(todayDate))
 																																	},
 																																	_1: {
 																																		ctor: '::',
 																																		_0: {
 																																			ctor: '_Tuple3',
-																																			_0: 'MARKET_TYPE',
-																																			_1: 'Market Type',
+																																			_0: 'SETTLEMENT_CCY',
+																																			_1: 'Settlement Ccy',
 																																			_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
 																																		},
 																																		_1: {
 																																			ctor: '::',
 																																			_0: {
 																																				ctor: '_Tuple3',
-																																				_0: 'FIXING_SOURCE',
-																																				_1: 'Fixing Source',
+																																				_0: 'MARKET_TYPE',
+																																				_1: 'Market Type',
 																																				_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
 																																			},
 																																			_1: {
 																																				ctor: '::',
 																																				_0: {
 																																					ctor: '_Tuple3',
-																																					_0: 'FIXING_DATE',
-																																					_1: 'Fixing Date',
-																																					_2: A2(
-																																						_user$project$InputForm_Types$DBDate,
-																																						true,
-																																						_user$project$InputForm_State$initialDbDate('yyyy-mm-dd'))
+																																					_0: 'FIXING_SOURCE',
+																																					_1: 'Fixing Source',
+																																					_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
 																																				},
 																																				_1: {
 																																					ctor: '::',
 																																					_0: {
 																																						ctor: '_Tuple3',
-																																						_0: 'REGISTRATION',
-																																						_1: 'Registration',
-																																						_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
+																																						_0: 'FIXING_DATE',
+																																						_1: 'Fixing Date',
+																																						_2: A2(
+																																							_user$project$InputForm_Types$DBDate,
+																																							true,
+																																							_user$project$InputForm_State$initialDbDate(todayDate))
 																																					},
 																																					_1: {
 																																						ctor: '::',
 																																						_0: {
 																																							ctor: '_Tuple3',
-																																							_0: 'DELIVERY_LOCATION',
-																																							_1: 'Delivery Location',
+																																							_0: 'REGISTRATION',
+																																							_1: 'Registration',
 																																							_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
 																																						},
 																																						_1: {
 																																							ctor: '::',
 																																							_0: {
 																																								ctor: '_Tuple3',
-																																								_0: 'NOTES',
-																																								_1: 'Notes',
+																																								_0: 'DELIVERY_LOCATION',
+																																								_1: 'Delivery Location',
 																																								_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
 																																							},
 																																							_1: {
 																																								ctor: '::',
 																																								_0: {
 																																									ctor: '_Tuple3',
-																																									_0: 'COMPETING_QUOTES',
-																																									_1: 'Competing Quotes',
-																																									_2: A3(_user$project$InputForm_Types$DBString, true, 53, '')
+																																									_0: 'NOTES',
+																																									_1: 'Notes',
+																																									_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
 																																								},
 																																								_1: {
 																																									ctor: '::',
 																																									_0: {
 																																										ctor: '_Tuple3',
-																																										_0: 'SAVINGS',
-																																										_1: 'Savings',
+																																										_0: 'COMPETING_QUOTES',
+																																										_1: 'Competing Quotes',
 																																										_2: A3(_user$project$InputForm_Types$DBString, true, 53, '')
 																																									},
 																																									_1: {
 																																										ctor: '::',
 																																										_0: {
 																																											ctor: '_Tuple3',
-																																											_0: 'EXECUTION_VENUE',
-																																											_1: 'Execution Venue',
-																																											_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
+																																											_0: 'SAVINGS',
+																																											_1: 'Savings',
+																																											_2: A3(_user$project$InputForm_Types$DBString, true, 53, '')
 																																										},
 																																										_1: {
 																																											ctor: '::',
 																																											_0: {
 																																												ctor: '_Tuple3',
-																																												_0: 'VENUE_NAME',
-																																												_1: 'Venue Name',
+																																												_0: 'EXECUTION_VENUE',
+																																												_1: 'Execution Venue',
 																																												_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
 																																											},
 																																											_1: {
 																																												ctor: '::',
 																																												_0: {
 																																													ctor: '_Tuple3',
-																																													_0: 'TRADER_LEI',
-																																													_1: 'Trader Lei',
+																																													_0: 'VENUE_NAME',
+																																													_1: 'Venue Name',
 																																													_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
 																																												},
 																																												_1: {
 																																													ctor: '::',
 																																													_0: {
 																																														ctor: '_Tuple3',
-																																														_0: 'COUNTERPARTY_LEI',
-																																														_1: 'Counterparty Lei',
+																																														_0: 'TRADER_LEI',
+																																														_1: 'Trader Lei',
 																																														_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
 																																													},
 																																													_1: {
 																																														ctor: '::',
 																																														_0: {
 																																															ctor: '_Tuple3',
-																																															_0: 'VENUE_EXECUTION_FEE',
-																																															_1: 'Venue Execution Fee',
+																																															_0: 'COUNTERPARTY_LEI',
+																																															_1: 'Counterparty Lei',
 																																															_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
 																																														},
 																																														_1: {
 																																															ctor: '::',
 																																															_0: {
 																																																ctor: '_Tuple3',
-																																																_0: 'USI_UTI_NAMESPACE',
-																																																_1: 'Usi Uti Namespace',
+																																																_0: 'VENUE_EXECUTION_FEE',
+																																																_1: 'Venue Execution Fee',
 																																																_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
 																																															},
 																																															_1: {
 																																																ctor: '::',
 																																																_0: {
 																																																	ctor: '_Tuple3',
-																																																	_0: 'USI_UTI_ID',
-																																																	_1: 'Usi Uti Id',
+																																																	_0: 'USI_UTI_NAMESPACE',
+																																																	_1: 'Usi Uti Namespace',
 																																																	_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
 																																																},
 																																																_1: {
 																																																	ctor: '::',
 																																																	_0: {
 																																																		ctor: '_Tuple3',
-																																																		_0: 'REPORTING_PARTY',
-																																																		_1: 'Reporting Party',
+																																																		_0: 'USI_UTI_ID',
+																																																		_1: 'Usi Uti Id',
 																																																		_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
 																																																	},
 																																																	_1: {
 																																																		ctor: '::',
 																																																		_0: {
 																																																			ctor: '_Tuple3',
-																																																			_0: 'CLIENT_ORDER_ID',
-																																																			_1: 'Client Order Id',
+																																																			_0: 'REPORTING_PARTY',
+																																																			_1: 'Reporting Party',
 																																																			_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
 																																																		},
 																																																		_1: {
 																																																			ctor: '::',
 																																																			_0: {
 																																																				ctor: '_Tuple3',
-																																																				_0: 'ACCOUNT_NAME',
-																																																				_1: 'Account Name',
+																																																				_0: 'CLIENT_ORDER_ID',
+																																																				_1: 'Client Order Id',
 																																																				_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
 																																																			},
 																																																			_1: {
 																																																				ctor: '::',
 																																																				_0: {
 																																																					ctor: '_Tuple3',
-																																																					_0: 'ACCOUNT_DESC',
-																																																					_1: 'Account Desc',
+																																																					_0: 'ACCOUNT_NAME',
+																																																					_1: 'Account Name',
 																																																					_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
 																																																				},
 																																																				_1: {
 																																																					ctor: '::',
 																																																					_0: {
 																																																						ctor: '_Tuple3',
-																																																						_0: 'ACCOUNT_SIDE',
-																																																						_1: 'Account Side',
+																																																						_0: 'ACCOUNT_DESC',
+																																																						_1: 'Account Desc',
 																																																						_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
 																																																					},
 																																																					_1: {
 																																																						ctor: '::',
 																																																						_0: {
 																																																							ctor: '_Tuple3',
-																																																							_0: 'ACCOUNT_VOLUME',
-																																																							_1: 'Account Volume',
+																																																							_0: 'ACCOUNT_SIDE',
+																																																							_1: 'Account Side',
 																																																							_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
 																																																						},
-																																																						_1: {ctor: '[]'}
+																																																						_1: {
+																																																							ctor: '::',
+																																																							_0: {
+																																																								ctor: '_Tuple3',
+																																																								_0: 'ACCOUNT_VOLUME',
+																																																								_1: 'Account Volume',
+																																																								_2: A3(_user$project$InputForm_Types$DBString, true, 50, '')
+																																																							},
+																																																							_1: {ctor: '[]'}
+																																																						}
 																																																					}
 																																																				}
 																																																			}
@@ -14902,7 +14911,7 @@ var _user$project$InputForm_State$form = {
 				}
 			}
 		}
-	}
+	};
 };
 var _user$project$InputForm_State$validateType = function (v) {
 	return A2(
@@ -15090,9 +15099,14 @@ var _user$project$InputForm_State$update = F2(
 		}
 	});
 var _user$project$InputForm_State$init = function (_p15) {
+	var _p16 = _p15;
 	return A2(
 		_elm_lang$core$Platform_Cmd_ops['!'],
-		{records: _user$project$InputForm_State$form, validate: false, submission: _krisajenkins$remotedata$RemoteData$NotAsked},
+		{
+			records: _user$project$InputForm_State$initForm(_p16.todayDate),
+			validate: false,
+			submission: _krisajenkins$remotedata$RemoteData$NotAsked
+		},
 		{ctor: '[]'});
 };
 

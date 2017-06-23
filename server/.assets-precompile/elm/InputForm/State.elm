@@ -7,11 +7,12 @@ import Time exposing (Time)
 import DatePicker
 import List.Extra
 import Date.Extra
+import Date
 
 
 init : { todayDate : Time } -> ( Model, Cmd Msg )
-init _ =
-    { records = form
+init { todayDate } =
+    { records = initForm todayDate
     , validate = False
     , submission = RemoteData.NotAsked
     }
@@ -148,7 +149,7 @@ validateType v =
         |> Result.map (always ())
 
 
-form =
+initForm todayDate =
     [ ( "RECORD_TYPE", "Record Type", DBString True 50 "" )
     , ( "PRODUCT", "Product", DBString True 50 "" )
     , ( "TRADE_ID", "Trade Id", DBString False 50 "" )
@@ -159,10 +160,10 @@ form =
     , ( "COUNTERPARTY_NAME", "Counterparty Name", DBString True 53 "" )
     , ( "COUNTERPARTY_DESK_CODE", "Counterparty Desk Code", DBString True 50 "" )
     , ( "COUNTERPARTY_COMPANY", "Counterparty Company", DBString True 57 "" )
-    , ( "DEAL_DATE_TIME", "Deal Date Time", DBTimeStamp False "" )
-    , ( "TRADE_DATE", "Trade Date", DBDate False <| initialDbDate "yyyy-mm-dd" )
-    , ( "START_DATE", "Start Date", DBDate True <| initialDbDate "yyyy-mm-dd" )
-    , ( "TERMINATION_DATE", "Termination Date", DBDate True <| initialDbDate "yyyy-mm-dd" )
+    , ( "DEAL_DATE_TIME", "Deal Date Time", DBTimeStamp False <| Date.Extra.toFormattedString "yyyy-mm-dd HH:mm:ss" <| Date.fromTime todayDate )
+    , ( "TRADE_DATE", "Trade Date", DBDate False <| initialDbDate todayDate )
+    , ( "START_DATE", "Start Date", DBDate True <| initialDbDate todayDate )
+    , ( "TERMINATION_DATE", "Termination Date", DBDate True <| initialDbDate todayDate )
     , ( "SIDE", "Side", DBString True 50 "" )
     , ( "TICKER", "Ticker", DBString True 56 "" )
     , ( "SECURITY_DESC", "Security Desc", DBString True 50 "" )
@@ -180,11 +181,11 @@ form =
     , ( "NEAR_LEG_FIXED_PRICE", "Near Leg Fixed Price", DBNumber True "" )
     , ( "MID_PRICE", "Mid Price", DBNumber True "" )
     , ( "NOTIONAL", "Notional", DBNumber True "" )
-    , ( "SETTLEMENT_DATE", "Settlement Date", DBDate True <| initialDbDate "yyyy-mm-dd" )
+    , ( "SETTLEMENT_DATE", "Settlement Date", DBDate True <| initialDbDate todayDate )
     , ( "SETTLEMENT_CCY", "Settlement Ccy", DBString True 50 "" )
     , ( "MARKET_TYPE", "Market Type", DBString True 50 "" )
     , ( "FIXING_SOURCE", "Fixing Source", DBString True 50 "" )
-    , ( "FIXING_DATE", "Fixing Date", DBDate True <| initialDbDate "yyyy-mm-dd" )
+    , ( "FIXING_DATE", "Fixing Date", DBDate True <| initialDbDate todayDate )
     , ( "REGISTRATION", "Registration", DBString True 50 "" )
     , ( "DELIVERY_LOCATION", "Delivery Location", DBString True 50 "" )
     , ( "NOTES", "Notes", DBString True 50 "" )
@@ -206,7 +207,7 @@ form =
     ]
 
 
-initialDbDate dateFormat =
+initialDbDate todayDate =
     let
         defaultSettings =
             DatePicker.defaultSettings
@@ -214,11 +215,11 @@ initialDbDate dateFormat =
         ( picker, pickerCmd ) =
             DatePicker.init
                 { defaultSettings
-                    | pickedDate = Nothing
+                    | pickedDate = Just <| Date.fromTime todayDate
                     , inputClassList =
                         [ ( "form-control", True )
                         ]
-                    , dateFormatter = Date.Extra.toFormattedString dateFormat
+                    , dateFormatter = Date.Extra.toFormattedString "yyyy-MM-dd"
                 }
     in
         picker
