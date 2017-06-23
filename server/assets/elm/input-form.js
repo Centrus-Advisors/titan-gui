@@ -12183,13 +12183,36 @@ var _user$project$InputForm_Rest$toJsonBody = function (tupleList) {
 	return _elm_lang$http$Http$jsonBody(
 		_elm_lang$core$Json_Encode$object(tupleList));
 };
+var _user$project$InputForm_Rest$reduceList = function (formList) {
+	return A3(
+		_elm_lang$core$List$foldl,
+		F2(
+			function (_p1, rOutcome) {
+				var _p2 = _p1;
+				return A3(
+					_elm_lang$core$Result$map2,
+					F2(
+						function (value, outcome) {
+							return {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: _p2._0, _1: value},
+								_1: outcome
+							};
+						}),
+					_p2._1,
+					rOutcome);
+			}),
+		_elm_lang$core$Result$Ok(
+			{ctor: '[]'}),
+		formList);
+};
 var _user$project$InputForm_Rest$emptyPicker = F2(
 	function (nullable, datePicker) {
-		var _p1 = _elm_community$elm_datepicker$DatePicker$getDate(datePicker);
-		if (_p1.ctor === 'Just') {
+		var _p3 = _elm_community$elm_datepicker$DatePicker$getDate(datePicker);
+		if (_p3.ctor === 'Just') {
 			return _elm_lang$core$Result$Ok(
 				_elm_lang$core$Json_Encode$string(
-					_elm_lang$core$Basics$toString(_p1._0)));
+					_elm_lang$core$Basics$toString(_p3._0)));
 		} else {
 			return nullable ? _elm_lang$core$Result$Ok(_elm_lang$core$Json_Encode$null) : _elm_lang$core$Result$Err('This field cannot be empty. Please choose a date');
 		}
@@ -12199,92 +12222,92 @@ var _user$project$InputForm_Rest$ifNotNull = F3(
 		return (_elm_lang$core$String$isEmpty(val) && (!canBeNull)) ? _elm_lang$core$Result$Err('This field cannot be empty') : f(val);
 	});
 var _user$project$InputForm_Rest$encodeDbType = function (dbType) {
-	var _p2 = dbType;
-	switch (_p2.ctor) {
+	var _p4 = dbType;
+	switch (_p4.ctor) {
 		case 'DBString':
-			var _p3 = _p2._1;
+			var _p5 = _p4._1;
 			return A3(
 				_user$project$InputForm_Rest$ifNotNull,
-				_p2._0,
-				_p2._2,
+				_p4._0,
+				_p4._2,
 				function (txt) {
 					return (_elm_lang$core$Native_Utils.cmp(
 						_elm_lang$core$String$length(txt),
-						_p3) > 0) ? _elm_lang$core$Result$Err(
+						_p5) > 0) ? _elm_lang$core$Result$Err(
 						A2(
 							_elm_lang$core$Basics_ops['++'],
 							'This field exceeds the maximum amount of ',
 							A2(
 								_elm_lang$core$Basics_ops['++'],
-								_elm_lang$core$Basics$toString(_p3),
+								_elm_lang$core$Basics$toString(_p5),
 								' characters'))) : _elm_lang$core$Result$Ok(
 						_elm_lang$core$Json_Encode$string(txt));
 				});
 		case 'DBTimeStamp':
-			return A2(_user$project$InputForm_Rest$emptyPicker, _p2._0, _p2._1);
+			return A2(_user$project$InputForm_Rest$emptyPicker, _p4._0, _p4._1);
 		case 'DBDate':
-			return A2(_user$project$InputForm_Rest$emptyPicker, _p2._0, _p2._1);
+			return A2(_user$project$InputForm_Rest$emptyPicker, _p4._0, _p4._1);
 		case 'DBNumber':
-			var _p5 = _p2._1;
-			if (_p2._0 && _elm_lang$core$String$isEmpty(_p5)) {
+			var _p7 = _p4._1;
+			if (_p4._0 && _elm_lang$core$String$isEmpty(_p7)) {
 				return _elm_lang$core$Result$Ok(_elm_lang$core$Json_Encode$null);
 			} else {
-				var _p4 = _elm_lang$core$String$toInt(_p5);
-				if (_p4.ctor === 'Ok') {
+				var _p6 = _elm_lang$core$String$toInt(_p7);
+				if (_p6.ctor === 'Ok') {
 					return _elm_lang$core$Result$Ok(
-						_elm_lang$core$Json_Encode$int(_p4._0));
+						_elm_lang$core$Json_Encode$int(_p6._0));
 				} else {
 					return _elm_lang$core$Result$Err(
 						A2(
 							_elm_lang$core$Basics_ops['++'],
 							'Could not convert \"',
-							A2(_elm_lang$core$Basics_ops['++'], _p5, '\" to integer. Please insert a valid number')));
+							A2(_elm_lang$core$Basics_ops['++'], _p7, '\" to integer. Please insert a valid number')));
 				}
 			}
 		default:
-			var _p7 = _p2._1;
-			if (_p2._0 && _elm_lang$core$String$isEmpty(_p7)) {
+			var _p9 = _p4._1;
+			if (_p4._0 && _elm_lang$core$String$isEmpty(_p9)) {
 				return _elm_lang$core$Result$Ok(_elm_lang$core$Json_Encode$null);
 			} else {
-				var _p6 = _elm_lang$core$String$toFloat(_p7);
-				if (_p6.ctor === 'Ok') {
+				var _p8 = _elm_lang$core$String$toFloat(_p9);
+				if (_p8.ctor === 'Ok') {
 					return _elm_lang$core$Result$Ok(
-						_elm_lang$core$Json_Encode$float(_p6._0));
+						_elm_lang$core$Json_Encode$float(_p8._0));
 				} else {
 					return _elm_lang$core$Result$Err(
 						A2(
 							_elm_lang$core$Basics_ops['++'],
 							'Could not convert \"',
-							A2(_elm_lang$core$Basics_ops['++'], _p7, '\" to float. Please insert a valid number')));
+							A2(_elm_lang$core$Basics_ops['++'], _p9, '\" to float. Please insert a valid number')));
 				}
 			}
 	}
 };
 var _user$project$InputForm_Rest$encodeFormList = function (formList) {
-	return _user$project$InputForm_Rest$toJsonBody(
-		A2(
-			_elm_lang$core$List$map,
-			function (_p8) {
-				var _p9 = _p8;
-				var _p10 = _p9._0;
-				return {
-					ctor: '_Tuple2',
-					_0: _p10,
-					_1: _elm_lang$core$Json_Encode$string(_p10)
-				};
-			},
-			formList));
+	return A2(
+		_elm_lang$core$Result$map,
+		_user$project$InputForm_Rest$toJsonBody,
+		_user$project$InputForm_Rest$reduceList(
+			A2(
+				_elm_lang$core$List$map,
+				function (_p10) {
+					var _p11 = _p10;
+					return {
+						ctor: '_Tuple2',
+						_0: _p11._0,
+						_1: _user$project$InputForm_Rest$encodeDbType(_p11._2)
+					};
+				},
+				formList)));
 };
 var _user$project$InputForm_Rest$dataEndpoint = '/data-input-api';
-var _user$project$InputForm_Rest$save = function (formList) {
-	var endpoint = _user$project$InputForm_Rest$dataEndpoint;
-	var body = _user$project$InputForm_Rest$encodeFormList(formList);
+var _user$project$InputForm_Rest$save = function (body) {
 	return _user$project$InputForm_Rest$attemptWithRemoteData(
 		A3(
 			_user$project$InputForm_Rest$post,
 			_elm_lang$core$Json_Decode$succeed(
 				{ctor: '_Tuple0'}),
-			endpoint,
+			_user$project$InputForm_Rest$dataEndpoint,
 			body));
 };
 
@@ -12951,31 +12974,29 @@ var _user$project$InputForm_State$update = F2(
 						{records: records}),
 					{ctor: '[]'});
 			case 'Submit':
-				return _user$project$InputForm_State$entireFormIsValid(model.records) ? A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{validate: false, submission: _krisajenkins$remotedata$RemoteData$Loading}),
-					{
-						ctor: '::',
-						_0: A2(
-							_elm_lang$core$Platform_Cmd$map,
-							_user$project$InputForm_Types$SubmissionInfo,
-							_user$project$InputForm_Rest$save(
-								A2(
-									_elm_lang$core$List$map,
-									function (_p14) {
-										var _p15 = _p14;
-										return {ctor: '_Tuple2', _0: _p15._0, _1: _p15._2};
-									},
-									model.records))),
-						_1: {ctor: '[]'}
-					}) : A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{validate: true}),
-					{ctor: '[]'});
+				var _p14 = _user$project$InputForm_Rest$encodeFormList(model.records);
+				if (_p14.ctor === 'Ok') {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							model,
+							{validate: false, submission: _krisajenkins$remotedata$RemoteData$Loading}),
+						{
+							ctor: '::',
+							_0: A2(
+								_elm_lang$core$Platform_Cmd$map,
+								_user$project$InputForm_Types$SubmissionInfo,
+								_user$project$InputForm_Rest$save(_p14._0)),
+							_1: {ctor: '[]'}
+						});
+				} else {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							model,
+							{validate: true}),
+						{ctor: '[]'});
+				}
 			default:
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
@@ -12985,7 +13006,7 @@ var _user$project$InputForm_State$update = F2(
 					{ctor: '[]'});
 		}
 	});
-var _user$project$InputForm_State$init = function (_p16) {
+var _user$project$InputForm_State$init = function (_p15) {
 	return A2(
 		_elm_lang$core$Platform_Cmd_ops['!'],
 		{records: _user$project$InputForm_State$form, validate: false, submission: _krisajenkins$remotedata$RemoteData$NotAsked},

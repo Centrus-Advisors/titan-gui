@@ -17,28 +17,14 @@ dataEndpoint =
     "/data-input-api"
 
 
-save : List ( String, DBType ) -> Cmd (WebData ())
-save formList =
-    let
-        body =
-            encodeFormList formList
-
-        endpoint =
-            dataEndpoint
-    in
-        post (Json.Decode.succeed ()) endpoint body
-            |> attemptWithRemoteData
+save : Http.Body -> Cmd (WebData ())
+save body =
+    post (Json.Decode.succeed ()) dataEndpoint body
+        |> attemptWithRemoteData
 
 
 
 ------------------------------- ENCODERS ---------------------------------------
-
-
-encodeFormList : List ( String, DBType ) -> Http.Body
-encodeFormList formList =
-    formList
-        |> List.map (\( a, b ) -> ( a, Encode.string a ))
-        |> toJsonBody
 
 
 encodeDbType : DBType -> Result String Encode.Value
@@ -102,6 +88,27 @@ emptyPicker nullable datePicker =
                 Ok (Encode.null)
             else
                 Err "This field cannot be empty. Please choose a date"
+
+
+encodeFormList : List ( String, String, DBType ) -> Result String Http.Body
+encodeFormList formList =
+    formList
+        |> List.map (\( a, b, c ) -> ( a, encodeDbType c ))
+        |> reduceList
+        |> Result.map toJsonBody
+
+
+reduceList : List ( String, Result String Encode.Value ) -> Result String (List ( String, Encode.Value ))
+reduceList formList =
+    List.foldl
+        (\( title, rValue ) rOutcome ->
+            Result.map2
+                (\value outcome -> ( title, value ) :: outcome)
+                rValue
+                rOutcome
+        )
+        (Result.Ok [])
+        formList
 
 
 toJsonBody : List ( String, Encode.Value ) -> Http.Body

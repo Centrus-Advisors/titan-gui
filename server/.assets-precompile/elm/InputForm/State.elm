@@ -1,7 +1,7 @@
 module InputForm.State exposing (init, update, subscriptions, validateType, entireFormIsValid)
 
 import InputForm.Types exposing (..)
-import InputForm.Rest exposing (save, encodeDbType)
+import InputForm.Rest exposing (save, encodeFormList, encodeDbType)
 import RemoteData
 import Time exposing (Time)
 import DatePicker
@@ -60,18 +60,18 @@ update msg model =
                 { model | records = records } ! []
 
         Submit ->
-            if entireFormIsValid model.records then
-                { model
-                    | validate = False
-                    , submission = RemoteData.Loading
-                }
-                    ! [ model.records
-                            |> List.map (\( a, b, c ) -> ( a, c ))
-                            |> save
-                            |> Cmd.map SubmissionInfo
-                      ]
-            else
-                { model | validate = True } ! []
+            case encodeFormList model.records of
+                Ok encoded ->
+                    { model
+                        | validate = False
+                        , submission = RemoteData.Loading
+                    }
+                        ! [ save encoded
+                                |> Cmd.map SubmissionInfo
+                          ]
+
+                Err err ->
+                    { model | validate = True } ! []
 
         SubmissionInfo status ->
             { model | submission = status } ! []
