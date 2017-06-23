@@ -8,6 +8,7 @@ import Http
 import RemoteData exposing (RemoteData, WebData)
 import Task exposing (Task)
 import DatePicker exposing (DatePicker)
+import Date.Extra
 
 
 -------------------------------- API -------------------------------------------
@@ -41,10 +42,10 @@ encodeDbType dbType =
                 )
 
         DBTimeStamp nullable datePicker ->
-            emptyPicker nullable datePicker
+            emptyPicker nullable "yyyy-mm-dd HH:mm:ss" datePicker
 
         DBDate nullable datePicker ->
-            emptyPicker nullable datePicker
+            emptyPicker nullable "yyyy-mm-dd" datePicker
 
         DBNumber nullable val ->
             if nullable && String.isEmpty val then
@@ -77,11 +78,13 @@ ifNotNull canBeNull val f =
         f val
 
 
-emptyPicker : Bool -> DatePicker -> Result String Encode.Value
-emptyPicker nullable datePicker =
+emptyPicker : Bool -> String -> DatePicker -> Result String Encode.Value
+emptyPicker nullable printFormat datePicker =
     case DatePicker.getDate datePicker of
         Just aDate ->
-            Ok (Encode.string <| toString aDate)
+            Date.Extra.toFormattedString printFormat aDate
+                |> Encode.string
+                |> Ok
 
         Nothing ->
             if nullable then
