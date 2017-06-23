@@ -5757,6 +5757,86 @@ var _elm_lang$core$Platform$Task = {ctor: 'Task'};
 var _elm_lang$core$Platform$ProcessId = {ctor: 'ProcessId'};
 var _elm_lang$core$Platform$Router = {ctor: 'Router'};
 
+var _NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode = _elm_lang$core$Json_Decode$succeed;
+var _NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$resolve = _elm_lang$core$Json_Decode$andThen(_elm_lang$core$Basics$identity);
+var _NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$custom = _elm_lang$core$Json_Decode$map2(
+	F2(
+		function (x, y) {
+			return y(x);
+		}));
+var _NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$hardcoded = function (_p0) {
+	return _NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$custom(
+		_elm_lang$core$Json_Decode$succeed(_p0));
+};
+var _NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optionalDecoder = F3(
+	function (pathDecoder, valDecoder, fallback) {
+		var nullOr = function (decoder) {
+			return _elm_lang$core$Json_Decode$oneOf(
+				{
+					ctor: '::',
+					_0: decoder,
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$core$Json_Decode$null(fallback),
+						_1: {ctor: '[]'}
+					}
+				});
+		};
+		var handleResult = function (input) {
+			var _p1 = A2(_elm_lang$core$Json_Decode$decodeValue, pathDecoder, input);
+			if (_p1.ctor === 'Ok') {
+				var _p2 = A2(
+					_elm_lang$core$Json_Decode$decodeValue,
+					nullOr(valDecoder),
+					_p1._0);
+				if (_p2.ctor === 'Ok') {
+					return _elm_lang$core$Json_Decode$succeed(_p2._0);
+				} else {
+					return _elm_lang$core$Json_Decode$fail(_p2._0);
+				}
+			} else {
+				return _elm_lang$core$Json_Decode$succeed(fallback);
+			}
+		};
+		return A2(_elm_lang$core$Json_Decode$andThen, handleResult, _elm_lang$core$Json_Decode$value);
+	});
+var _NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optionalAt = F4(
+	function (path, valDecoder, fallback, decoder) {
+		return A2(
+			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$custom,
+			A3(
+				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optionalDecoder,
+				A2(_elm_lang$core$Json_Decode$at, path, _elm_lang$core$Json_Decode$value),
+				valDecoder,
+				fallback),
+			decoder);
+	});
+var _NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional = F4(
+	function (key, valDecoder, fallback, decoder) {
+		return A2(
+			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$custom,
+			A3(
+				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optionalDecoder,
+				A2(_elm_lang$core$Json_Decode$field, key, _elm_lang$core$Json_Decode$value),
+				valDecoder,
+				fallback),
+			decoder);
+	});
+var _NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$requiredAt = F3(
+	function (path, valDecoder, decoder) {
+		return A2(
+			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$custom,
+			A2(_elm_lang$core$Json_Decode$at, path, valDecoder),
+			decoder);
+	});
+var _NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required = F3(
+	function (key, valDecoder, decoder) {
+		return A2(
+			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$custom,
+			A2(_elm_lang$core$Json_Decode$field, key, valDecoder),
+			decoder);
+	});
+
 //import Result //
 
 var _elm_lang$core$Native_Date = function() {
@@ -12027,6 +12107,9 @@ var _user$project$InputForm_Types$Model = F3(
 	function (a, b, c) {
 		return {records: a, validate: b, submission: c};
 	});
+var _user$project$InputForm_Types$SubmissionInfo = function (a) {
+	return {ctor: 'SubmissionInfo', _0: a};
+};
 var _user$project$InputForm_Types$Submit = {ctor: 'Submit'};
 var _user$project$InputForm_Types$ChangeRecord = F2(
 	function (a, b) {
@@ -12057,6 +12140,153 @@ var _user$project$InputForm_Types$DBString = F3(
 	function (a, b, c) {
 		return {ctor: 'DBString', _0: a, _1: b, _2: c};
 	});
+
+var _user$project$InputForm_Rest$mapResult = F3(
+	function (failure, success, result) {
+		var _p0 = result;
+		if (_p0.ctor === 'Ok') {
+			return success(_p0._0);
+		} else {
+			return failure(_p0._0);
+		}
+	});
+var _user$project$InputForm_Rest$attemptWithRemoteData = _elm_lang$core$Task$attempt(
+	A2(_user$project$InputForm_Rest$mapResult, _krisajenkins$remotedata$RemoteData$Failure, _krisajenkins$remotedata$RemoteData$Success));
+var _user$project$InputForm_Rest$makeRequest = F4(
+	function (method, body, expect, endpoint) {
+		var options = {
+			method: method,
+			headers: {ctor: '[]'},
+			url: endpoint,
+			body: body,
+			expect: expect,
+			timeout: _elm_lang$core$Maybe$Nothing,
+			withCredentials: false
+		};
+		return _elm_lang$http$Http$request(options);
+	});
+var _user$project$InputForm_Rest$makeJsonRequest = F4(
+	function (method, body, decoder, endpoint) {
+		return A4(
+			_user$project$InputForm_Rest$makeRequest,
+			method,
+			body,
+			_elm_lang$http$Http$expectJson(decoder),
+			endpoint);
+	});
+var _user$project$InputForm_Rest$post = F3(
+	function (decoder, endpoint, body) {
+		return _elm_lang$http$Http$toTask(
+			A4(_user$project$InputForm_Rest$makeJsonRequest, 'POST', body, decoder, endpoint));
+	});
+var _user$project$InputForm_Rest$toJsonBody = function (tupleList) {
+	return _elm_lang$http$Http$jsonBody(
+		_elm_lang$core$Json_Encode$object(tupleList));
+};
+var _user$project$InputForm_Rest$emptyPicker = F2(
+	function (nullable, datePicker) {
+		var _p1 = _elm_community$elm_datepicker$DatePicker$getDate(datePicker);
+		if (_p1.ctor === 'Just') {
+			return _elm_lang$core$Result$Ok(
+				_elm_lang$core$Json_Encode$string(
+					_elm_lang$core$Basics$toString(_p1._0)));
+		} else {
+			return nullable ? _elm_lang$core$Result$Ok(_elm_lang$core$Json_Encode$null) : _elm_lang$core$Result$Err('This field cannot be empty. Please choose a date');
+		}
+	});
+var _user$project$InputForm_Rest$ifNotNull = F3(
+	function (canBeNull, val, f) {
+		return (_elm_lang$core$String$isEmpty(val) && (!canBeNull)) ? _elm_lang$core$Result$Err('This field cannot be empty') : f(val);
+	});
+var _user$project$InputForm_Rest$encodeDbType = function (dbType) {
+	var _p2 = dbType;
+	switch (_p2.ctor) {
+		case 'DBString':
+			var _p3 = _p2._1;
+			return A3(
+				_user$project$InputForm_Rest$ifNotNull,
+				_p2._0,
+				_p2._2,
+				function (txt) {
+					return (_elm_lang$core$Native_Utils.cmp(
+						_elm_lang$core$String$length(txt),
+						_p3) > 0) ? _elm_lang$core$Result$Err(
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							'This field exceeds the maximum amount of ',
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								_elm_lang$core$Basics$toString(_p3),
+								' characters'))) : _elm_lang$core$Result$Ok(
+						_elm_lang$core$Json_Encode$string(txt));
+				});
+		case 'DBTimeStamp':
+			return A2(_user$project$InputForm_Rest$emptyPicker, _p2._0, _p2._1);
+		case 'DBDate':
+			return A2(_user$project$InputForm_Rest$emptyPicker, _p2._0, _p2._1);
+		case 'DBNumber':
+			var _p5 = _p2._1;
+			if (_p2._0 && _elm_lang$core$String$isEmpty(_p5)) {
+				return _elm_lang$core$Result$Ok(_elm_lang$core$Json_Encode$null);
+			} else {
+				var _p4 = _elm_lang$core$String$toInt(_p5);
+				if (_p4.ctor === 'Ok') {
+					return _elm_lang$core$Result$Ok(
+						_elm_lang$core$Json_Encode$int(_p4._0));
+				} else {
+					return _elm_lang$core$Result$Err(
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							'Could not convert \"',
+							A2(_elm_lang$core$Basics_ops['++'], _p5, '\" to integer. Please insert a valid number')));
+				}
+			}
+		default:
+			var _p7 = _p2._1;
+			if (_p2._0 && _elm_lang$core$String$isEmpty(_p7)) {
+				return _elm_lang$core$Result$Ok(_elm_lang$core$Json_Encode$null);
+			} else {
+				var _p6 = _elm_lang$core$String$toFloat(_p7);
+				if (_p6.ctor === 'Ok') {
+					return _elm_lang$core$Result$Ok(
+						_elm_lang$core$Json_Encode$float(_p6._0));
+				} else {
+					return _elm_lang$core$Result$Err(
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							'Could not convert \"',
+							A2(_elm_lang$core$Basics_ops['++'], _p7, '\" to float. Please insert a valid number')));
+				}
+			}
+	}
+};
+var _user$project$InputForm_Rest$encodeFormList = function (formList) {
+	return _user$project$InputForm_Rest$toJsonBody(
+		A2(
+			_elm_lang$core$List$map,
+			function (_p8) {
+				var _p9 = _p8;
+				var _p10 = _p9._0;
+				return {
+					ctor: '_Tuple2',
+					_0: _p10,
+					_1: _elm_lang$core$Json_Encode$string(_p10)
+				};
+			},
+			formList));
+};
+var _user$project$InputForm_Rest$dataEndpoint = '/data-input-api';
+var _user$project$InputForm_Rest$save = function (formList) {
+	var endpoint = _user$project$InputForm_Rest$dataEndpoint;
+	var body = _user$project$InputForm_Rest$encodeFormList(formList);
+	return _user$project$InputForm_Rest$attemptWithRemoteData(
+		A3(
+			_user$project$InputForm_Rest$post,
+			_elm_lang$core$Json_Decode$succeed(
+				{ctor: '_Tuple0'}),
+			endpoint,
+			body));
+};
 
 var _user$project$InputForm_State$initialDbDate = function () {
 	var defaultSettings = _elm_community$elm_datepicker$DatePicker$defaultSettings;
@@ -12562,84 +12792,12 @@ var _user$project$InputForm_State$form = {
 		}
 	}
 };
-var _user$project$InputForm_State$emptyPicker = F2(
-	function (nullable, datePicker) {
-		var _p1 = _elm_community$elm_datepicker$DatePicker$getDate(datePicker);
-		if (_p1.ctor === 'Just') {
-			return _elm_lang$core$Result$Ok(
-				{ctor: '_Tuple0'});
-		} else {
-			return nullable ? _elm_lang$core$Result$Ok(
-				{ctor: '_Tuple0'}) : _elm_lang$core$Result$Err('This field cannot be empty. Please choose a date');
-		}
-	});
-var _user$project$InputForm_State$ifNotNull = F3(
-	function (canBeNull, val, f) {
-		return (_elm_lang$core$String$isEmpty(val) && (!canBeNull)) ? _elm_lang$core$Result$Err('This field cannot be empty') : f(val);
-	});
 var _user$project$InputForm_State$validateType = function (v) {
-	var _p2 = v;
-	switch (_p2.ctor) {
-		case 'DBString':
-			var _p3 = _p2._1;
-			return A3(
-				_user$project$InputForm_State$ifNotNull,
-				_p2._0,
-				_p2._2,
-				function (txt) {
-					return (_elm_lang$core$Native_Utils.cmp(
-						_elm_lang$core$String$length(txt),
-						_p3) > 0) ? _elm_lang$core$Result$Err(
-						A2(
-							_elm_lang$core$Basics_ops['++'],
-							'This field exceeds the maximum amount of ',
-							A2(
-								_elm_lang$core$Basics_ops['++'],
-								_elm_lang$core$Basics$toString(_p3),
-								' characters'))) : _elm_lang$core$Result$Ok(
-						{ctor: '_Tuple0'});
-				});
-		case 'DBTimeStamp':
-			return A2(_user$project$InputForm_State$emptyPicker, _p2._0, _p2._1);
-		case 'DBDate':
-			return A2(_user$project$InputForm_State$emptyPicker, _p2._0, _p2._1);
-		case 'DBNumber':
-			var _p5 = _p2._1;
-			if (_p2._0 && _elm_lang$core$String$isEmpty(_p5)) {
-				return _elm_lang$core$Result$Ok(
-					{ctor: '_Tuple0'});
-			} else {
-				var _p4 = _elm_lang$core$String$toInt(_p5);
-				if (_p4.ctor === 'Ok') {
-					return _elm_lang$core$Result$Ok(
-						{ctor: '_Tuple0'});
-				} else {
-					return _elm_lang$core$Result$Err(
-						A2(
-							_elm_lang$core$Basics_ops['++'],
-							'Could not convert \"',
-							A2(_elm_lang$core$Basics_ops['++'], _p5, '\" to integer. Please insert a valid number')));
-				}
-			}
-		default:
-			var _p7 = _p2._1;
-			if (_p2._0 && _elm_lang$core$String$isEmpty(_p7)) {
-				return _elm_lang$core$Result$Ok(
-					{ctor: '_Tuple0'});
-			} else {
-				var _p6 = _elm_lang$core$String$toFloat(_p7);
-				if (_p6.ctor === 'Ok') {
-					return _elm_lang$core$Result$Ok(
-						{ctor: '_Tuple0'});
-				} else {
-					return _elm_lang$core$Result$Err(
-						A2(
-							_elm_lang$core$Basics_ops['++'],
-							'Could not convert \"',
-							A2(_elm_lang$core$Basics_ops['++'], _p7, '\" to float. Please insert a valid number')));
-				}
-			}
-	}
+	return A2(
+		_elm_lang$core$Result$map,
+		_elm_lang$core$Basics$always(
+			{ctor: '_Tuple0'}),
+		_user$project$InputForm_Rest$encodeDbType(v));
 };
 var _user$project$InputForm_State$entireFormIsValid = function (form) {
 	return A2(
@@ -12664,9 +12822,9 @@ var _user$project$InputForm_State$entireFormIsValid = function (form) {
 					_user$project$InputForm_State$validateType,
 					A2(
 						_elm_lang$core$List$map,
-						function (_p8) {
-							var _p9 = _p8;
-							return _p9._2;
+						function (_p1) {
+							var _p2 = _p1;
+							return _p2._2;
 						},
 						form)))));
 };
@@ -12674,91 +12832,91 @@ var _user$project$InputForm_State$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$none;
 };
 var _user$project$InputForm_State$getPicker = function (v) {
-	var _p10 = v;
-	switch (_p10.ctor) {
+	var _p3 = v;
+	switch (_p3.ctor) {
 		case 'DBTimeStamp':
-			return _elm_lang$core$Maybe$Just(_p10._1);
+			return _elm_lang$core$Maybe$Just(_p3._1);
 		case 'DBDate':
-			return _elm_lang$core$Maybe$Just(_p10._1);
+			return _elm_lang$core$Maybe$Just(_p3._1);
 		default:
 			return _elm_lang$core$Maybe$Nothing;
 	}
 };
 var _user$project$InputForm_State$updateRecord = F2(
 	function (val, dbType) {
-		var _p11 = dbType;
-		switch (_p11.ctor) {
+		var _p4 = dbType;
+		switch (_p4.ctor) {
 			case 'DBTimeStamp':
 				return dbType;
 			case 'DBDate':
 				return dbType;
 			case 'DBString':
-				return A3(_user$project$InputForm_Types$DBString, _p11._0, _p11._1, val);
+				return A3(_user$project$InputForm_Types$DBString, _p4._0, _p4._1, val);
 			case 'DBNumber':
-				return A2(_user$project$InputForm_Types$DBNumber, _p11._0, val);
+				return A2(_user$project$InputForm_Types$DBNumber, _p4._0, val);
 			default:
-				return A2(_user$project$InputForm_Types$DBFloat, _p11._0, val);
+				return A2(_user$project$InputForm_Types$DBFloat, _p4._0, val);
 		}
 	});
 var _user$project$InputForm_State$updateDatePicker = F2(
 	function (newDatePicker, dbType) {
-		var _p12 = dbType;
-		switch (_p12.ctor) {
+		var _p5 = dbType;
+		switch (_p5.ctor) {
 			case 'DBTimeStamp':
-				return A2(_user$project$InputForm_Types$DBTimeStamp, _p12._0, newDatePicker);
+				return A2(_user$project$InputForm_Types$DBTimeStamp, _p5._0, newDatePicker);
 			case 'DBDate':
-				return A2(_user$project$InputForm_Types$DBDate, _p12._0, newDatePicker);
+				return A2(_user$project$InputForm_Types$DBDate, _p5._0, newDatePicker);
 			default:
 				return dbType;
 		}
 	});
 var _user$project$InputForm_State$tupleMapThird = F2(
-	function (f, _p13) {
-		var _p14 = _p13;
+	function (f, _p6) {
+		var _p7 = _p6;
 		return {
 			ctor: '_Tuple3',
-			_0: _p14._0,
-			_1: _p14._1,
-			_2: f(_p14._2)
+			_0: _p7._0,
+			_1: _p7._1,
+			_2: f(_p7._2)
 		};
 	});
 var _user$project$InputForm_State$update = F2(
 	function (msg, model) {
-		var _p15 = msg;
-		switch (_p15.ctor) {
+		var _p8 = msg;
+		switch (_p8.ctor) {
 			case 'DoNothing':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					model,
 					{ctor: '[]'});
 			case 'ChangeDate':
-				var _p20 = _p15._0;
+				var _p13 = _p8._0;
 				var mPicker = A2(
 					_elm_lang$core$Maybe$andThen,
 					_user$project$InputForm_State$getPicker,
 					A2(
 						_elm_lang$core$Maybe$map,
-						function (_p16) {
-							var _p17 = _p16;
-							return _p17._2;
+						function (_p9) {
+							var _p10 = _p9;
+							return _p10._2;
 						},
-						A2(_elm_community$list_extra$List_Extra$getAt, _p20, model.records)));
-				var _p18 = mPicker;
-				if (_p18.ctor === 'Nothing') {
+						A2(_elm_community$list_extra$List_Extra$getAt, _p13, model.records)));
+				var _p11 = mPicker;
+				if (_p11.ctor === 'Nothing') {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						model,
 						{ctor: '[]'});
 				} else {
-					var _p19 = A2(_elm_community$elm_datepicker$DatePicker$update, _p15._1, _p18._0);
-					var newPicker = _p19._0;
-					var newPickerCmd = _p19._1;
+					var _p12 = A2(_elm_community$elm_datepicker$DatePicker$update, _p8._1, _p11._0);
+					var newPicker = _p12._0;
+					var newPickerCmd = _p12._1;
 					var records = A3(
 						_elm_community$list_extra$List_Extra$updateIfIndex,
 						F2(
 							function (x, y) {
 								return _elm_lang$core$Native_Utils.eq(x, y);
-							})(_p20),
+							})(_p13),
 						_user$project$InputForm_State$tupleMapThird(
 							_user$project$InputForm_State$updateDatePicker(newPicker)),
 						model.records);
@@ -12771,7 +12929,7 @@ var _user$project$InputForm_State$update = F2(
 							ctor: '::',
 							_0: A2(
 								_elm_lang$core$Platform_Cmd$map,
-								_user$project$InputForm_Types$ChangeDate(_p20),
+								_user$project$InputForm_Types$ChangeDate(_p13),
 								newPickerCmd),
 							_1: {ctor: '[]'}
 						});
@@ -12782,9 +12940,9 @@ var _user$project$InputForm_State$update = F2(
 					F2(
 						function (x, y) {
 							return _elm_lang$core$Native_Utils.eq(x, y);
-						})(_p15._0),
+						})(_p8._0),
 					_user$project$InputForm_State$tupleMapThird(
-						_user$project$InputForm_State$updateRecord(_p15._1)),
+						_user$project$InputForm_State$updateRecord(_p8._1)),
 					model.records);
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
@@ -12792,24 +12950,42 @@ var _user$project$InputForm_State$update = F2(
 						model,
 						{records: records}),
 					{ctor: '[]'});
-			default:
+			case 'Submit':
 				return _user$project$InputForm_State$entireFormIsValid(model.records) ? A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
 						model,
-						{
-							submission: _krisajenkins$remotedata$RemoteData$Success(
-								{ctor: '_Tuple0'})
-						}),
-					{ctor: '[]'}) : A2(
+						{validate: false, submission: _krisajenkins$remotedata$RemoteData$Loading}),
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$core$Platform_Cmd$map,
+							_user$project$InputForm_Types$SubmissionInfo,
+							_user$project$InputForm_Rest$save(
+								A2(
+									_elm_lang$core$List$map,
+									function (_p14) {
+										var _p15 = _p14;
+										return {ctor: '_Tuple2', _0: _p15._0, _1: _p15._2};
+									},
+									model.records))),
+						_1: {ctor: '[]'}
+					}) : A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
 						model,
 						{validate: true}),
 					{ctor: '[]'});
+			default:
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{submission: _p8._0}),
+					{ctor: '[]'});
 		}
 	});
-var _user$project$InputForm_State$init = function (_p21) {
+var _user$project$InputForm_State$init = function (_p16) {
 	return A2(
 		_elm_lang$core$Platform_Cmd_ops['!'],
 		{records: _user$project$InputForm_State$form, validate: false, submission: _krisajenkins$remotedata$RemoteData$NotAsked},

@@ -1,6 +1,7 @@
 module InputForm.State exposing (init, update, subscriptions, validateType, entireFormIsValid)
 
 import InputForm.Types exposing (..)
+import InputForm.Rest exposing (save, encodeDbType)
 import RemoteData
 import Time exposing (Time)
 import DatePicker
@@ -60,9 +61,20 @@ update msg model =
 
         Submit ->
             if entireFormIsValid model.records then
-                { model | submission = RemoteData.Success () } ! []
+                { model
+                    | validate = False
+                    , submission = RemoteData.Loading
+                }
+                    ! [ model.records
+                            |> List.map (\( a, b, c ) -> ( a, c ))
+                            |> save
+                            |> Cmd.map SubmissionInfo
+                      ]
             else
                 { model | validate = True } ! []
+
+        SubmissionInfo status ->
+            { model | submission = status } ! []
 
 
 tupleMapThird : (c -> c) -> ( a, b, c ) -> ( a, b, c )
@@ -137,63 +149,8 @@ entireFormIsValid form =
 
 validateType : DBType -> Result String ()
 validateType v =
-    case v of
-        DBString nullable maxLen val ->
-            ifNotNull nullable
-                val
-                (\txt ->
-                    if String.length txt > maxLen then
-                        Err <| "This field exceeds the maximum amount of " ++ (toString maxLen) ++ " characters"
-                    else
-                        Ok ()
-                )
-
-        DBTimeStamp nullable datePicker ->
-            emptyPicker nullable datePicker
-
-        DBDate nullable datePicker ->
-            emptyPicker nullable datePicker
-
-        DBNumber nullable val ->
-            if nullable && String.isEmpty val then
-                Ok ()
-            else
-                case String.toInt val of
-                    Ok _ ->
-                        Ok ()
-
-                    Err _ ->
-                        Err <| "Could not convert \"" ++ val ++ "\" to integer. Please insert a valid number"
-
-        DBFloat nullable val ->
-            if nullable && String.isEmpty val then
-                Ok ()
-            else
-                case String.toFloat val of
-                    Ok _ ->
-                        Ok ()
-
-                    Err _ ->
-                        Err <| "Could not convert \"" ++ val ++ "\" to float. Please insert a valid number"
-
-
-ifNotNull canBeNull val f =
-    if String.isEmpty val && not canBeNull then
-        Err "This field cannot be empty"
-    else
-        f val
-
-
-emptyPicker nullable datePicker =
-    case DatePicker.getDate datePicker of
-        Just aDate ->
-            Ok ()
-
-        Nothing ->
-            if nullable then
-                Ok ()
-            else
-                Err "This field cannot be empty. Please choose a date"
+    encodeDbType v
+        |> Result.map (always ())
 
 
 form =

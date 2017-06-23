@@ -30,6 +30,6 @@ organiser.registerAll("./tasks", {
     },
     watch: {
         src: ".",
-        taskNames: ["less"]
+        taskNames: ["build-elm"]
     }
 });

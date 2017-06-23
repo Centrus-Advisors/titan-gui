@@ -21,6 +21,7 @@ type Msg
     | ChangeDate Index DatePicker.Msg
     | ChangeRecord Index String
     | Submit
+    | SubmissionInfo (WebData ())
 
 
 type alias MaxLength =
