@@ -6,6 +6,7 @@ import RemoteData
 import Time exposing (Time)
 import DatePicker
 import List.Extra
+import Date.Extra
 
 
 init : { todayDate : Time } -> ( Model, Cmd Msg )
@@ -85,9 +86,6 @@ tupleMapThird f ( a, b, c ) =
 updateDatePicker : DatePicker.DatePicker -> DBType -> DBType
 updateDatePicker newDatePicker dbType =
     case dbType of
-        DBTimeStamp nullable datePicker ->
-            DBTimeStamp nullable newDatePicker
-
         DBDate nullable datePicker ->
             DBDate nullable newDatePicker
 
@@ -98,8 +96,8 @@ updateDatePicker newDatePicker dbType =
 updateRecord : String -> DBType -> DBType
 updateRecord val dbType =
     case dbType of
-        DBTimeStamp nullable datePicker ->
-            dbType
+        DBTimeStamp nullable oldVal ->
+            DBTimeStamp nullable val
 
         DBDate nullable datePicker ->
             dbType
@@ -117,9 +115,6 @@ updateRecord val dbType =
 getPicker : DBType -> Maybe DatePicker.DatePicker
 getPicker v =
     case v of
-        DBTimeStamp nullable datePicker ->
-            Just datePicker
-
         DBDate nullable datePicker ->
             Just datePicker
 
@@ -164,10 +159,10 @@ form =
     , ( "COUNTERPARTY_NAME", "Counterparty Name", DBString True 53 "" )
     , ( "COUNTERPARTY_DESK_CODE", "Counterparty Desk Code", DBString True 50 "" )
     , ( "COUNTERPARTY_COMPANY", "Counterparty Company", DBString True 57 "" )
-    , ( "DEAL_DATE_TIME", "Deal Date Time", DBTimeStamp False initialDbDate )
-    , ( "TRADE_DATE", "Trade Date", DBDate False initialDbDate )
-    , ( "START_DATE", "Start Date", DBDate True initialDbDate )
-    , ( "TERMINATION_DATE", "Termination Date", DBDate True initialDbDate )
+    , ( "DEAL_DATE_TIME", "Deal Date Time", DBTimeStamp False "" )
+    , ( "TRADE_DATE", "Trade Date", DBDate False <| initialDbDate "yyyy-mm-dd" )
+    , ( "START_DATE", "Start Date", DBDate True <| initialDbDate "yyyy-mm-dd" )
+    , ( "TERMINATION_DATE", "Termination Date", DBDate True <| initialDbDate "yyyy-mm-dd" )
     , ( "SIDE", "Side", DBString True 50 "" )
     , ( "TICKER", "Ticker", DBString True 56 "" )
     , ( "SECURITY_DESC", "Security Desc", DBString True 50 "" )
@@ -185,11 +180,11 @@ form =
     , ( "NEAR_LEG_FIXED_PRICE", "Near Leg Fixed Price", DBNumber True "" )
     , ( "MID_PRICE", "Mid Price", DBNumber True "" )
     , ( "NOTIONAL", "Notional", DBNumber True "" )
-    , ( "SETTLEMENT_DATE", "Settlement Date", DBDate True initialDbDate )
+    , ( "SETTLEMENT_DATE", "Settlement Date", DBDate True <| initialDbDate "yyyy-mm-dd" )
     , ( "SETTLEMENT_CCY", "Settlement Ccy", DBString True 50 "" )
     , ( "MARKET_TYPE", "Market Type", DBString True 50 "" )
     , ( "FIXING_SOURCE", "Fixing Source", DBString True 50 "" )
-    , ( "FIXING_DATE", "Fixing Date", DBDate True initialDbDate )
+    , ( "FIXING_DATE", "Fixing Date", DBDate True <| initialDbDate "yyyy-mm-dd" )
     , ( "REGISTRATION", "Registration", DBString True 50 "" )
     , ( "DELIVERY_LOCATION", "Delivery Location", DBString True 50 "" )
     , ( "NOTES", "Notes", DBString True 50 "" )
@@ -211,7 +206,7 @@ form =
     ]
 
 
-initialDbDate =
+initialDbDate dateFormat =
     let
         defaultSettings =
             DatePicker.defaultSettings
@@ -220,7 +215,10 @@ initialDbDate =
             DatePicker.init
                 { defaultSettings
                     | pickedDate = Nothing
-                    , inputClassList = [ ( "form-control", True ) ]
+                    , inputClassList =
+                        [ ( "form-control", True )
+                        ]
+                    , dateFormatter = Date.Extra.toFormattedString dateFormat
                 }
     in
         picker

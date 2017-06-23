@@ -112,9 +112,8 @@ formField idx placeholder v =
         DBString nullable maxLen val ->
             inputField placeholder val (ChangeRecord idx)
 
-        DBTimeStamp nullable datePicker ->
-            DatePicker.view datePicker
-                |> Html.map (ChangeDate idx)
+        DBTimeStamp nullable val ->
+            inputField placeholder val (ChangeRecord idx)
 
         DBDate nullable datePicker ->
             div [ style [ ( "cursor", "pointer" ) ] ]

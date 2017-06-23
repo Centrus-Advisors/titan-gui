@@ -34,7 +34,7 @@ type alias Nullable =
 
 type DBType
     = DBString Nullable MaxLength String
-    | DBTimeStamp Nullable DatePicker
+    | DBTimeStamp Nullable String
     | DBDate Nullable DatePicker
     | DBNumber Nullable String
     | DBFloat Nullable String

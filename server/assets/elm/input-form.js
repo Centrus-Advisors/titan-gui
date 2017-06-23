@@ -14281,79 +14281,82 @@ var _user$project$InputForm_Rest$reduceList = function (formList) {
 			{ctor: '[]'}),
 		formList);
 };
-var _user$project$InputForm_Rest$emptyPicker = F3(
-	function (nullable, printFormat, datePicker) {
-		var _p3 = _elm_community$elm_datepicker$DatePicker$getDate(datePicker);
-		if (_p3.ctor === 'Just') {
-			return _elm_lang$core$Result$Ok(
-				_elm_lang$core$Json_Encode$string(
-					A2(_justinmimbs$elm_date_extra$Date_Extra$toFormattedString, printFormat, _p3._0)));
-		} else {
-			return nullable ? _elm_lang$core$Result$Ok(_elm_lang$core$Json_Encode$null) : _elm_lang$core$Result$Err('This field cannot be empty. Please choose a date');
-		}
-	});
 var _user$project$InputForm_Rest$ifNotNull = F3(
 	function (canBeNull, val, f) {
 		return (_elm_lang$core$String$isEmpty(val) && (!canBeNull)) ? _elm_lang$core$Result$Err('This field cannot be empty') : f(val);
 	});
 var _user$project$InputForm_Rest$encodeDbType = function (dbType) {
-	var _p4 = dbType;
-	switch (_p4.ctor) {
+	var _p3 = dbType;
+	switch (_p3.ctor) {
 		case 'DBString':
-			var _p5 = _p4._1;
+			var _p4 = _p3._1;
 			return A3(
 				_user$project$InputForm_Rest$ifNotNull,
-				_p4._0,
-				_p4._2,
+				_p3._0,
+				_p3._2,
 				function (txt) {
 					return (_elm_lang$core$Native_Utils.cmp(
 						_elm_lang$core$String$length(txt),
-						_p5) > 0) ? _elm_lang$core$Result$Err(
+						_p4) > 0) ? _elm_lang$core$Result$Err(
 						A2(
 							_elm_lang$core$Basics_ops['++'],
 							'This field exceeds the maximum amount of ',
 							A2(
 								_elm_lang$core$Basics_ops['++'],
-								_elm_lang$core$Basics$toString(_p5),
+								_elm_lang$core$Basics$toString(_p4),
 								' characters'))) : _elm_lang$core$Result$Ok(
 						_elm_lang$core$Json_Encode$string(txt));
 				});
 		case 'DBTimeStamp':
-			return A3(_user$project$InputForm_Rest$emptyPicker, _p4._0, 'yyyy-mm-dd HH:mm:ss', _p4._1);
+			var _p5 = _elm_lang$core$Date$fromString(_p3._1);
+			if (_p5.ctor === 'Ok') {
+				return _elm_lang$core$Result$Ok(
+					_elm_lang$core$Json_Encode$string(
+						A2(_justinmimbs$elm_date_extra$Date_Extra$toFormattedString, 'yyyy-mm-dd HH:mm:ss', _p5._0)));
+			} else {
+				return _p3._0 ? _elm_lang$core$Result$Ok(_elm_lang$core$Json_Encode$null) : _elm_lang$core$Result$Err('Invalid date. Please enter date and time like this: 2017-10-10 20:01:01');
+			}
 		case 'DBDate':
-			return A3(_user$project$InputForm_Rest$emptyPicker, _p4._0, 'yyyy-mm-dd', _p4._1);
+			var _p6 = _elm_community$elm_datepicker$DatePicker$getDate(_p3._1);
+			if (_p6.ctor === 'Just') {
+				return _elm_lang$core$Result$Ok(
+					_elm_lang$core$Json_Encode$string(
+						A2(_justinmimbs$elm_date_extra$Date_Extra$toFormattedString, 'yyyy-mm-dd', _p6._0)));
+			} else {
+				return _p3._0 ? _elm_lang$core$Result$Ok(_elm_lang$core$Json_Encode$null) : _elm_lang$core$Result$Err('This field cannot be empty. Please choose a date');
+			}
 		case 'DBNumber':
-			var _p7 = _p4._1;
-			if (_p4._0 && _elm_lang$core$String$isEmpty(_p7)) {
+			var _p8 = _p3._1;
+			if (_p3._0 && _elm_lang$core$String$isEmpty(_p8)) {
 				return _elm_lang$core$Result$Ok(_elm_lang$core$Json_Encode$null);
 			} else {
-				var _p6 = _elm_lang$core$String$toInt(_p7);
-				if (_p6.ctor === 'Ok') {
+				var _p7 = _elm_lang$core$String$toInt(_p8);
+				if (_p7.ctor === 'Ok') {
 					return _elm_lang$core$Result$Ok(
-						_elm_lang$core$Json_Encode$int(_p6._0));
+						_elm_lang$core$Json_Encode$int(_p7._0));
 				} else {
 					return _elm_lang$core$Result$Err(
 						A2(
 							_elm_lang$core$Basics_ops['++'],
 							'Could not convert \"',
-							A2(_elm_lang$core$Basics_ops['++'], _p7, '\" to integer. Please insert a valid number')));
+							A2(_elm_lang$core$Basics_ops['++'], _p8, '\" to integer. Please insert a valid number')));
 				}
 			}
 		default:
-			var _p9 = _p4._1;
-			if (_p4._0 && _elm_lang$core$String$isEmpty(_p9)) {
+			var _p10 = _p3._1;
+			if (_p3._0 && _elm_lang$core$String$isEmpty(_p10)) {
 				return _elm_lang$core$Result$Ok(_elm_lang$core$Json_Encode$null);
 			} else {
-				var _p8 = _elm_lang$core$String$toFloat(_p9);
-				if (_p8.ctor === 'Ok') {
+				var _p9 = _elm_lang$core$String$toFloat(_p10);
+				if (_p9.ctor === 'Ok') {
 					return _elm_lang$core$Result$Ok(
-						_elm_lang$core$Json_Encode$float(_p8._0));
+						_elm_lang$core$Json_Encode$float(_p9._0));
 				} else {
 					return _elm_lang$core$Result$Err(
 						A2(
 							_elm_lang$core$Basics_ops['++'],
 							'Could not convert \"',
-							A2(_elm_lang$core$Basics_ops['++'], _p9, '\" to float. Please insert a valid number')));
+							A2(_elm_lang$core$Basics_ops['++'], _p10, '\" to float. Please insert a valid number')));
 				}
 			}
 	}
@@ -14365,12 +14368,12 @@ var _user$project$InputForm_Rest$encodeFormList = function (formList) {
 		_user$project$InputForm_Rest$reduceList(
 			A2(
 				_elm_lang$core$List$map,
-				function (_p10) {
-					var _p11 = _p10;
+				function (_p11) {
+					var _p12 = _p11;
 					return {
 						ctor: '_Tuple2',
-						_0: _p11._0,
-						_1: _user$project$InputForm_Rest$encodeDbType(_p11._2)
+						_0: _p12._0,
+						_1: _user$project$InputForm_Rest$encodeDbType(_p12._2)
 					};
 				},
 				formList)));
@@ -14381,7 +14384,7 @@ var _user$project$InputForm_Rest$save = function (body) {
 		A3(_user$project$InputForm_Rest$post, _user$project$InputForm_Rest$tradeDecoder, _user$project$InputForm_Rest$dataEndpoint, body));
 };
 
-var _user$project$InputForm_State$initialDbDate = function () {
+var _user$project$InputForm_State$initialDbDate = function (dateFormat) {
 	var defaultSettings = _elm_community$elm_datepicker$DatePicker$defaultSettings;
 	var _p0 = _elm_community$elm_datepicker$DatePicker$init(
 		_elm_lang$core$Native_Utils.update(
@@ -14392,12 +14395,13 @@ var _user$project$InputForm_State$initialDbDate = function () {
 					ctor: '::',
 					_0: {ctor: '_Tuple2', _0: 'form-control', _1: true},
 					_1: {ctor: '[]'}
-				}
+				},
+				dateFormatter: _justinmimbs$elm_date_extra$Date_Extra$toFormattedString(dateFormat)
 			}));
 	var picker = _p0._0;
 	var pickerCmd = _p0._1;
 	return picker;
-}();
+};
 var _user$project$InputForm_State$form = {
 	ctor: '::',
 	_0: {
@@ -14484,7 +14488,7 @@ var _user$project$InputForm_State$form = {
 												ctor: '_Tuple3',
 												_0: 'DEAL_DATE_TIME',
 												_1: 'Deal Date Time',
-												_2: A2(_user$project$InputForm_Types$DBTimeStamp, false, _user$project$InputForm_State$initialDbDate)
+												_2: A2(_user$project$InputForm_Types$DBTimeStamp, false, '')
 											},
 											_1: {
 												ctor: '::',
@@ -14492,7 +14496,10 @@ var _user$project$InputForm_State$form = {
 													ctor: '_Tuple3',
 													_0: 'TRADE_DATE',
 													_1: 'Trade Date',
-													_2: A2(_user$project$InputForm_Types$DBDate, false, _user$project$InputForm_State$initialDbDate)
+													_2: A2(
+														_user$project$InputForm_Types$DBDate,
+														false,
+														_user$project$InputForm_State$initialDbDate('yyyy-mm-dd'))
 												},
 												_1: {
 													ctor: '::',
@@ -14500,7 +14507,10 @@ var _user$project$InputForm_State$form = {
 														ctor: '_Tuple3',
 														_0: 'START_DATE',
 														_1: 'Start Date',
-														_2: A2(_user$project$InputForm_Types$DBDate, true, _user$project$InputForm_State$initialDbDate)
+														_2: A2(
+															_user$project$InputForm_Types$DBDate,
+															true,
+															_user$project$InputForm_State$initialDbDate('yyyy-mm-dd'))
 													},
 													_1: {
 														ctor: '::',
@@ -14508,7 +14518,10 @@ var _user$project$InputForm_State$form = {
 															ctor: '_Tuple3',
 															_0: 'TERMINATION_DATE',
 															_1: 'Termination Date',
-															_2: A2(_user$project$InputForm_Types$DBDate, true, _user$project$InputForm_State$initialDbDate)
+															_2: A2(
+																_user$project$InputForm_Types$DBDate,
+																true,
+																_user$project$InputForm_State$initialDbDate('yyyy-mm-dd'))
 														},
 														_1: {
 															ctor: '::',
@@ -14652,7 +14665,10 @@ var _user$project$InputForm_State$form = {
 																																	ctor: '_Tuple3',
 																																	_0: 'SETTLEMENT_DATE',
 																																	_1: 'Settlement Date',
-																																	_2: A2(_user$project$InputForm_Types$DBDate, true, _user$project$InputForm_State$initialDbDate)
+																																	_2: A2(
+																																		_user$project$InputForm_Types$DBDate,
+																																		true,
+																																		_user$project$InputForm_State$initialDbDate('yyyy-mm-dd'))
 																																},
 																																_1: {
 																																	ctor: '::',
@@ -14684,7 +14700,10 @@ var _user$project$InputForm_State$form = {
 																																					ctor: '_Tuple3',
 																																					_0: 'FIXING_DATE',
 																																					_1: 'Fixing Date',
-																																					_2: A2(_user$project$InputForm_Types$DBDate, true, _user$project$InputForm_State$initialDbDate)
+																																					_2: A2(
+																																						_user$project$InputForm_Types$DBDate,
+																																						true,
+																																						_user$project$InputForm_State$initialDbDate('yyyy-mm-dd'))
 																																				},
 																																				_1: {
 																																					ctor: '::',
@@ -14926,13 +14945,10 @@ var _user$project$InputForm_State$subscriptions = function (model) {
 };
 var _user$project$InputForm_State$getPicker = function (v) {
 	var _p3 = v;
-	switch (_p3.ctor) {
-		case 'DBTimeStamp':
-			return _elm_lang$core$Maybe$Just(_p3._1);
-		case 'DBDate':
-			return _elm_lang$core$Maybe$Just(_p3._1);
-		default:
-			return _elm_lang$core$Maybe$Nothing;
+	if (_p3.ctor === 'DBDate') {
+		return _elm_lang$core$Maybe$Just(_p3._1);
+	} else {
+		return _elm_lang$core$Maybe$Nothing;
 	}
 };
 var _user$project$InputForm_State$updateRecord = F2(
@@ -14940,7 +14956,7 @@ var _user$project$InputForm_State$updateRecord = F2(
 		var _p4 = dbType;
 		switch (_p4.ctor) {
 			case 'DBTimeStamp':
-				return dbType;
+				return A2(_user$project$InputForm_Types$DBTimeStamp, _p4._0, val);
 			case 'DBDate':
 				return dbType;
 			case 'DBString':
@@ -14954,13 +14970,10 @@ var _user$project$InputForm_State$updateRecord = F2(
 var _user$project$InputForm_State$updateDatePicker = F2(
 	function (newDatePicker, dbType) {
 		var _p5 = dbType;
-		switch (_p5.ctor) {
-			case 'DBTimeStamp':
-				return A2(_user$project$InputForm_Types$DBTimeStamp, _p5._0, newDatePicker);
-			case 'DBDate':
-				return A2(_user$project$InputForm_Types$DBDate, _p5._0, newDatePicker);
-			default:
-				return dbType;
+		if (_p5.ctor === 'DBDate') {
+			return A2(_user$project$InputForm_Types$DBDate, _p5._0, newDatePicker);
+		} else {
+			return dbType;
 		}
 	});
 var _user$project$InputForm_State$tupleMapThird = F2(
@@ -15255,10 +15268,11 @@ var _user$project$InputForm_View$formField = F3(
 					_p0._2,
 					_user$project$InputForm_Types$ChangeRecord(idx));
 			case 'DBTimeStamp':
-				return A2(
-					_elm_lang$html$Html$map,
-					_user$project$InputForm_Types$ChangeDate(idx),
-					_elm_community$elm_datepicker$DatePicker$view(_p0._1));
+				return A3(
+					_user$project$InputForm_View$inputField,
+					placeholder,
+					_p0._1,
+					_user$project$InputForm_Types$ChangeRecord(idx));
 			case 'DBDate':
 				return A2(
 					_elm_lang$html$Html$div,

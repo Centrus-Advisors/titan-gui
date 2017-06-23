@@ -9,6 +9,7 @@ import RemoteData exposing (RemoteData, WebData)
 import Task exposing (Task)
 import DatePicker exposing (DatePicker)
 import Date.Extra
+import Date
 
 
 -------------------------------- API -------------------------------------------
@@ -41,11 +42,32 @@ encodeDbType dbType =
                         Ok (Encode.string txt)
                 )
 
-        DBTimeStamp nullable datePicker ->
-            emptyPicker nullable "yyyy-mm-dd HH:mm:ss" datePicker
+        DBTimeStamp nullable val ->
+            case Date.fromString val of
+                Ok aDate ->
+                    aDate
+                        |> Date.Extra.toFormattedString "yyyy-mm-dd HH:mm:ss"
+                        |> Encode.string
+                        |> Ok
+
+                Err _ ->
+                    if nullable then
+                        Ok (Encode.null)
+                    else
+                        Err "Invalid date. Please enter date and time like this: 2017-10-10 20:01:01"
 
         DBDate nullable datePicker ->
-            emptyPicker nullable "yyyy-mm-dd" datePicker
+            case DatePicker.getDate datePicker of
+                Just aDate ->
+                    Date.Extra.toFormattedString "yyyy-mm-dd" aDate
+                        |> Encode.string
+                        |> Ok
+
+                Nothing ->
+                    if nullable then
+                        Ok (Encode.null)
+                    else
+                        Err "This field cannot be empty. Please choose a date"
 
         DBNumber nullable val ->
             if nullable && String.isEmpty val then
@@ -76,21 +98,6 @@ ifNotNull canBeNull val f =
         Err "This field cannot be empty"
     else
         f val
-
-
-emptyPicker : Bool -> String -> DatePicker -> Result String Encode.Value
-emptyPicker nullable printFormat datePicker =
-    case DatePicker.getDate datePicker of
-        Just aDate ->
-            Date.Extra.toFormattedString printFormat aDate
-                |> Encode.string
-                |> Ok
-
-        Nothing ->
-            if nullable then
-                Ok (Encode.null)
-            else
-                Err "This field cannot be empty. Please choose a date"
 
 
 encodeFormList : List ( String, String, DBType ) -> Result String Http.Body
