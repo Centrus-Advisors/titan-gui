@@ -3,7 +3,7 @@ module InputForm.Rest exposing (..)
 import InputForm.Types exposing (..)
 import Json.Encode as Encode
 import Json.Decode.Pipeline exposing (decode, optional, required)
-import Json.Decode exposing (Decoder)
+import Json.Decode exposing (Decoder, string)
 import Http
 import RemoteData exposing (RemoteData, WebData)
 import Task exposing (Task)
@@ -18,9 +18,9 @@ dataEndpoint =
     "/data-input-api"
 
 
-save : Http.Body -> Cmd (WebData ())
+save : Http.Body -> Cmd (WebData Trade)
 save body =
-    post (Json.Decode.succeed ()) dataEndpoint body
+    post tradeDecoder dataEndpoint body
         |> attemptWithRemoteData
 
 
@@ -123,6 +123,68 @@ toJsonBody tupleList =
 
 
 -------------------------------- DECODERS --------------------------------------
+
+
+tradeDecoder : Decoder Trade
+tradeDecoder =
+    decode Trade
+        |> optional "RECORD_TYPE" string ""
+        |> optional "PRODUCT" string ""
+        |> optional "TRADE_ID" string ""
+        |> optional "ROLE" string ""
+        |> optional "TRADER_NAME" string ""
+        |> optional "TRADER_DESK_CODE" string ""
+        |> optional "TRADER_COMPANY" string ""
+        |> optional "COUNTERPARTY_NAME" string ""
+        |> optional "COUNTERPARTY_DESK_CODE" string ""
+        |> optional "COUNTERPARTY_COMPANY" string ""
+        |> optional "DEAL_DATE_TIME" string ""
+        |> optional "TRADE_DATE" string ""
+        |> optional "START_DATE" string ""
+        |> optional "TERMINATION_DATE" string ""
+        |> optional "SIDE" string ""
+        |> optional "TICKER" string ""
+        |> optional "SECURITY_DESC" string ""
+        |> optional "TRADE_TYPE" string ""
+        |> optional "LEG_NUMBER" string ""
+        |> optional "IDENTIFIER" string ""
+        |> optional "CALCULATION_TYPE" string ""
+        |> optional "FLOATING_REF_PRICE" string ""
+        |> optional "QUANTITY" string ""
+        |> optional "QUANTITY_UNIT" string ""
+        |> optional "PERIODICITY" string ""
+        |> optional "FIXED_PRICE" string ""
+        |> optional "CURRENCY" string ""
+        |> optional "PRICE_IN" string ""
+        |> optional "NEAR_LEG_FIXED_PRICE" string ""
+        |> optional "MID_PRICE" string ""
+        |> optional "NOTIONAL" string ""
+        |> optional "SETTLEMENT_DATE" string ""
+        |> optional "SETTLEMENT_CCY" string ""
+        |> optional "MARKET_TYPE" string ""
+        |> optional "FIXING_SOURCE" string ""
+        |> optional "FIXING_DATE" string ""
+        |> optional "REGISTRATION" string ""
+        |> optional "DELIVERY_LOCATION" string ""
+        |> optional "NOTES" string ""
+        |> optional "COMPETING_QUOTES" string ""
+        |> optional "SAVINGS" string ""
+        |> optional "EXECUTION_VENUE" string ""
+        |> optional "VENUE_NAME" string ""
+        |> optional "TRADER_LEI" string ""
+        |> optional "COUNTERPARTY_LEI" string ""
+        |> optional "VENUE_EXECUTION_FEE" string ""
+        |> optional "USI_UTI_NAMESPACE" string ""
+        |> optional "USI_UTI_ID" string ""
+        |> optional "REPORTING_PARTY" string ""
+        |> optional "CLIENT_ORDER_ID" string ""
+        |> optional "ACCOUNT_NAME" string ""
+        |> optional "ACCOUNT_DESC" string ""
+        |> optional "ACCOUNT_SIDE" string ""
+        |> optional "ACCOUNT_VOLUME" string ""
+
+
+
 ---------------------------- LOW LEVEL HTTP ------------------------------------
 
 

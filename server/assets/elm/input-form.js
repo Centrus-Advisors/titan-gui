@@ -13802,6 +13802,115 @@ var _user$project$InputForm_Types$Model = F3(
 	function (a, b, c) {
 		return {records: a, validate: b, submission: c};
 	});
+var _user$project$InputForm_Types$Trade = function (a) {
+	return function (b) {
+		return function (c) {
+			return function (d) {
+				return function (e) {
+					return function (f) {
+						return function (g) {
+							return function (h) {
+								return function (i) {
+									return function (j) {
+										return function (k) {
+											return function (l) {
+												return function (m) {
+													return function (n) {
+														return function (o) {
+															return function (p) {
+																return function (q) {
+																	return function (r) {
+																		return function (s) {
+																			return function (t) {
+																				return function (u) {
+																					return function (v) {
+																						return function (w) {
+																							return function (x) {
+																								return function (y) {
+																									return function (z) {
+																										return function (_1) {
+																											return function (_2) {
+																												return function (_3) {
+																													return function (_4) {
+																														return function (_5) {
+																															return function (_6) {
+																																return function (_7) {
+																																	return function (_8) {
+																																		return function (_9) {
+																																			return function (_10) {
+																																				return function (_11) {
+																																					return function (_12) {
+																																						return function (_13) {
+																																							return function (_14) {
+																																								return function (_15) {
+																																									return function (_16) {
+																																										return function (_17) {
+																																											return function (_18) {
+																																												return function (_19) {
+																																													return function (_20) {
+																																														return function (_21) {
+																																															return function (_22) {
+																																																return function (_23) {
+																																																	return function (_24) {
+																																																		return function (_25) {
+																																																			return function (_26) {
+																																																				return function (_27) {
+																																																					return function (_28) {
+																																																						return {record_type: a, product: b, trade_id: c, role: d, trader_name: e, trader_desk_code: f, trader_company: g, counterparty_name: h, counterparty_desk_code: i, counterparty_company: j, deal_date_time: k, trade_date: l, start_date: m, termination_date: n, side: o, ticker: p, security_desc: q, trade_type: r, leg_number: s, identifier: t, calculation_type: u, floating_ref_price: v, quantity: w, quantity_unit: x, periodicity: y, fixed_price: z, currency: _1, price_in: _2, near_leg_fixed_price: _3, mid_price: _4, notional: _5, settlement_date: _6, settlement_ccy: _7, market_type: _8, fixing_source: _9, fixing_date: _10, registration: _11, delivery_location: _12, notes: _13, competing_quotes: _14, savings: _15, execution_venue: _16, venue_name: _17, trader_lei: _18, counterparty_lei: _19, venue_execution_fee: _20, usi_uti_namespace: _21, usi_uti_id: _22, reporting_party: _23, client_order_id: _24, account_name: _25, account_desc: _26, account_side: _27, account_volume: _28};
+																																																					};
+																																																				};
+																																																			};
+																																																		};
+																																																	};
+																																																};
+																																															};
+																																														};
+																																													};
+																																												};
+																																											};
+																																										};
+																																									};
+																																								};
+																																							};
+																																						};
+																																					};
+																																				};
+																																			};
+																																		};
+																																	};
+																																};
+																															};
+																														};
+																													};
+																												};
+																											};
+																										};
+																									};
+																								};
+																							};
+																						};
+																					};
+																				};
+																			};
+																		};
+																	};
+																};
+															};
+														};
+													};
+												};
+											};
+										};
+									};
+								};
+							};
+						};
+					};
+				};
+			};
+		};
+	};
+};
 var _user$project$InputForm_Types$SubmissionInfo = function (a) {
 	return {ctor: 'SubmissionInfo', _0: a};
 };
@@ -13874,6 +13983,277 @@ var _user$project$InputForm_Rest$post = F3(
 		return _elm_lang$http$Http$toTask(
 			A4(_user$project$InputForm_Rest$makeJsonRequest, 'POST', body, decoder, endpoint));
 	});
+var _user$project$InputForm_Rest$tradeDecoder = A4(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+	'ACCOUNT_VOLUME',
+	_elm_lang$core$Json_Decode$string,
+	'',
+	A4(
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+		'ACCOUNT_SIDE',
+		_elm_lang$core$Json_Decode$string,
+		'',
+		A4(
+			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+			'ACCOUNT_DESC',
+			_elm_lang$core$Json_Decode$string,
+			'',
+			A4(
+				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+				'ACCOUNT_NAME',
+				_elm_lang$core$Json_Decode$string,
+				'',
+				A4(
+					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+					'CLIENT_ORDER_ID',
+					_elm_lang$core$Json_Decode$string,
+					'',
+					A4(
+						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+						'REPORTING_PARTY',
+						_elm_lang$core$Json_Decode$string,
+						'',
+						A4(
+							_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+							'USI_UTI_ID',
+							_elm_lang$core$Json_Decode$string,
+							'',
+							A4(
+								_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+								'USI_UTI_NAMESPACE',
+								_elm_lang$core$Json_Decode$string,
+								'',
+								A4(
+									_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+									'VENUE_EXECUTION_FEE',
+									_elm_lang$core$Json_Decode$string,
+									'',
+									A4(
+										_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+										'COUNTERPARTY_LEI',
+										_elm_lang$core$Json_Decode$string,
+										'',
+										A4(
+											_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+											'TRADER_LEI',
+											_elm_lang$core$Json_Decode$string,
+											'',
+											A4(
+												_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+												'VENUE_NAME',
+												_elm_lang$core$Json_Decode$string,
+												'',
+												A4(
+													_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+													'EXECUTION_VENUE',
+													_elm_lang$core$Json_Decode$string,
+													'',
+													A4(
+														_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+														'SAVINGS',
+														_elm_lang$core$Json_Decode$string,
+														'',
+														A4(
+															_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+															'COMPETING_QUOTES',
+															_elm_lang$core$Json_Decode$string,
+															'',
+															A4(
+																_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+																'NOTES',
+																_elm_lang$core$Json_Decode$string,
+																'',
+																A4(
+																	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+																	'DELIVERY_LOCATION',
+																	_elm_lang$core$Json_Decode$string,
+																	'',
+																	A4(
+																		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+																		'REGISTRATION',
+																		_elm_lang$core$Json_Decode$string,
+																		'',
+																		A4(
+																			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+																			'FIXING_DATE',
+																			_elm_lang$core$Json_Decode$string,
+																			'',
+																			A4(
+																				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+																				'FIXING_SOURCE',
+																				_elm_lang$core$Json_Decode$string,
+																				'',
+																				A4(
+																					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+																					'MARKET_TYPE',
+																					_elm_lang$core$Json_Decode$string,
+																					'',
+																					A4(
+																						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+																						'SETTLEMENT_CCY',
+																						_elm_lang$core$Json_Decode$string,
+																						'',
+																						A4(
+																							_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+																							'SETTLEMENT_DATE',
+																							_elm_lang$core$Json_Decode$string,
+																							'',
+																							A4(
+																								_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+																								'NOTIONAL',
+																								_elm_lang$core$Json_Decode$string,
+																								'',
+																								A4(
+																									_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+																									'MID_PRICE',
+																									_elm_lang$core$Json_Decode$string,
+																									'',
+																									A4(
+																										_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+																										'NEAR_LEG_FIXED_PRICE',
+																										_elm_lang$core$Json_Decode$string,
+																										'',
+																										A4(
+																											_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+																											'PRICE_IN',
+																											_elm_lang$core$Json_Decode$string,
+																											'',
+																											A4(
+																												_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+																												'CURRENCY',
+																												_elm_lang$core$Json_Decode$string,
+																												'',
+																												A4(
+																													_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+																													'FIXED_PRICE',
+																													_elm_lang$core$Json_Decode$string,
+																													'',
+																													A4(
+																														_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+																														'PERIODICITY',
+																														_elm_lang$core$Json_Decode$string,
+																														'',
+																														A4(
+																															_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+																															'QUANTITY_UNIT',
+																															_elm_lang$core$Json_Decode$string,
+																															'',
+																															A4(
+																																_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+																																'QUANTITY',
+																																_elm_lang$core$Json_Decode$string,
+																																'',
+																																A4(
+																																	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+																																	'FLOATING_REF_PRICE',
+																																	_elm_lang$core$Json_Decode$string,
+																																	'',
+																																	A4(
+																																		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+																																		'CALCULATION_TYPE',
+																																		_elm_lang$core$Json_Decode$string,
+																																		'',
+																																		A4(
+																																			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+																																			'IDENTIFIER',
+																																			_elm_lang$core$Json_Decode$string,
+																																			'',
+																																			A4(
+																																				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+																																				'LEG_NUMBER',
+																																				_elm_lang$core$Json_Decode$string,
+																																				'',
+																																				A4(
+																																					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+																																					'TRADE_TYPE',
+																																					_elm_lang$core$Json_Decode$string,
+																																					'',
+																																					A4(
+																																						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+																																						'SECURITY_DESC',
+																																						_elm_lang$core$Json_Decode$string,
+																																						'',
+																																						A4(
+																																							_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+																																							'TICKER',
+																																							_elm_lang$core$Json_Decode$string,
+																																							'',
+																																							A4(
+																																								_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+																																								'SIDE',
+																																								_elm_lang$core$Json_Decode$string,
+																																								'',
+																																								A4(
+																																									_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+																																									'TERMINATION_DATE',
+																																									_elm_lang$core$Json_Decode$string,
+																																									'',
+																																									A4(
+																																										_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+																																										'START_DATE',
+																																										_elm_lang$core$Json_Decode$string,
+																																										'',
+																																										A4(
+																																											_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+																																											'TRADE_DATE',
+																																											_elm_lang$core$Json_Decode$string,
+																																											'',
+																																											A4(
+																																												_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+																																												'DEAL_DATE_TIME',
+																																												_elm_lang$core$Json_Decode$string,
+																																												'',
+																																												A4(
+																																													_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+																																													'COUNTERPARTY_COMPANY',
+																																													_elm_lang$core$Json_Decode$string,
+																																													'',
+																																													A4(
+																																														_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+																																														'COUNTERPARTY_DESK_CODE',
+																																														_elm_lang$core$Json_Decode$string,
+																																														'',
+																																														A4(
+																																															_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+																																															'COUNTERPARTY_NAME',
+																																															_elm_lang$core$Json_Decode$string,
+																																															'',
+																																															A4(
+																																																_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+																																																'TRADER_COMPANY',
+																																																_elm_lang$core$Json_Decode$string,
+																																																'',
+																																																A4(
+																																																	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+																																																	'TRADER_DESK_CODE',
+																																																	_elm_lang$core$Json_Decode$string,
+																																																	'',
+																																																	A4(
+																																																		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+																																																		'TRADER_NAME',
+																																																		_elm_lang$core$Json_Decode$string,
+																																																		'',
+																																																		A4(
+																																																			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+																																																			'ROLE',
+																																																			_elm_lang$core$Json_Decode$string,
+																																																			'',
+																																																			A4(
+																																																				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+																																																				'TRADE_ID',
+																																																				_elm_lang$core$Json_Decode$string,
+																																																				'',
+																																																				A4(
+																																																					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+																																																					'PRODUCT',
+																																																					_elm_lang$core$Json_Decode$string,
+																																																					'',
+																																																					A4(
+																																																						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+																																																						'RECORD_TYPE',
+																																																						_elm_lang$core$Json_Decode$string,
+																																																						'',
+																																																						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$InputForm_Types$Trade)))))))))))))))))))))))))))))))))))))))))))))))))))))));
 var _user$project$InputForm_Rest$toJsonBody = function (tupleList) {
 	return _elm_lang$http$Http$jsonBody(
 		_elm_lang$core$Json_Encode$object(tupleList));
@@ -13998,12 +14378,7 @@ var _user$project$InputForm_Rest$encodeFormList = function (formList) {
 var _user$project$InputForm_Rest$dataEndpoint = '/data-input-api';
 var _user$project$InputForm_Rest$save = function (body) {
 	return _user$project$InputForm_Rest$attemptWithRemoteData(
-		A3(
-			_user$project$InputForm_Rest$post,
-			_elm_lang$core$Json_Decode$succeed(
-				{ctor: '_Tuple0'}),
-			_user$project$InputForm_Rest$dataEndpoint,
-			body));
+		A3(_user$project$InputForm_Rest$post, _user$project$InputForm_Rest$tradeDecoder, _user$project$InputForm_Rest$dataEndpoint, body));
 };
 
 var _user$project$InputForm_State$initialDbDate = function () {
