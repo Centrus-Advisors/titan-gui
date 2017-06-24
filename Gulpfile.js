@@ -19,6 +19,13 @@ organiser.registerAll("./tasks", {
             dest: path.join(dest, "elm"),
             moduleName: "input-form",
             ext: "js"
+        },
+        "download-form": {
+            watch: path.join(src, "elm/**/*"),
+            src: path.join(src, "elm/DownloadForm/Main.elm"),
+            dest: path.join(dest, "elm"),
+            moduleName: "download-form",
+            ext: "js"
         }
     },
     "jasmine-test-node": {

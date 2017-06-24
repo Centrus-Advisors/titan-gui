@@ -1,7 +1,12 @@
-<div class="js-input-form"></div>
+<div class="js-download-form"></div>
 
 <!-- end row -->
 
-<div class="widget-simple-chart card-box">
-    <p><a href="/data-input-api" download="trades.csv" target="blank" ><i class="fa fa-file-excel-o" aria-hidden="true"></i> Today's trades</a></p>
-</div>
+<script src="assets/elm/download-form.js"></script>
+
+
+<script type="text/javascript">
+    /* globals Elm */
+    const container = document.querySelector(".js-download-form");
+    Elm.DownloadForm.embed(container, { todayDate: Date.now() })
+</script>
