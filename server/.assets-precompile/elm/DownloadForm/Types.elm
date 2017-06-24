@@ -6,8 +6,11 @@ import DatePicker exposing (DatePicker)
 
 
 type alias Model =
-    { date : DatePicker }
+    { fromDate : DatePicker
+    , toDate : DatePicker
+    }
 
 
 type Msg
-    = ChangeDate DatePicker.Msg
+    = FromDate DatePicker.Msg
+    | ToDate DatePicker.Msg

@@ -13718,11 +13718,15 @@ var _krisajenkins$remotedata$RemoteData$update = F2(
 		}
 	});
 
-var _user$project$DownloadForm_Types$Model = function (a) {
-	return {date: a};
+var _user$project$DownloadForm_Types$Model = F2(
+	function (a, b) {
+		return {fromDate: a, toDate: b};
+	});
+var _user$project$DownloadForm_Types$ToDate = function (a) {
+	return {ctor: 'ToDate', _0: a};
 };
-var _user$project$DownloadForm_Types$ChangeDate = function (a) {
-	return {ctor: 'ChangeDate', _0: a};
+var _user$project$DownloadForm_Types$FromDate = function (a) {
+	return {ctor: 'FromDate', _0: a};
 };
 
 var _user$project$DownloadForm_View$getDateString = F2(
@@ -13735,6 +13739,33 @@ var _user$project$DownloadForm_View$getDateString = F2(
 				_justinmimbs$elm_date_extra$Date_Extra$toFormattedString(format),
 				_elm_community$elm_datepicker$DatePicker$getDate(picker)));
 	});
+var _user$project$DownloadForm_View$renderPicker = function (picker) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('m-b-10'),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$style(
+					{
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'max-width', _1: '10em'},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'display', _1: 'inline-block'},
+							_1: {ctor: '[]'}
+						}
+					}),
+				_1: {ctor: '[]'}
+			}
+		},
+		{
+			ctor: '::',
+			_0: _elm_community$elm_datepicker$DatePicker$view(picker),
+			_1: {ctor: '[]'}
+		});
+};
 var _user$project$DownloadForm_View$root = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -13783,28 +13814,72 @@ var _user$project$DownloadForm_View$root = function (model) {
 							_1: {
 								ctor: '::',
 								_0: A2(
-									_elm_lang$html$Html$div,
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$style(
-											{
-												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 'max-width', _1: '10em'},
-												_1: {
-													ctor: '::',
-													_0: {ctor: '_Tuple2', _0: 'display', _1: 'inline-block'},
-													_1: {ctor: '[]'}
-												}
-											}),
-										_1: {ctor: '[]'}
-									},
+									_elm_lang$html$Html$table,
+									{ctor: '[]'},
 									{
 										ctor: '::',
 										_0: A2(
-											_elm_lang$html$Html$map,
-											_user$project$DownloadForm_Types$ChangeDate,
-											_elm_community$elm_datepicker$DatePicker$view(model.date)),
-										_1: {ctor: '[]'}
+											_elm_lang$html$Html$tr,
+											{ctor: '[]'},
+											{
+												ctor: '::',
+												_0: A2(
+													_elm_lang$html$Html$td,
+													{ctor: '[]'},
+													{
+														ctor: '::',
+														_0: _elm_lang$html$Html$text('From '),
+														_1: {ctor: '[]'}
+													}),
+												_1: {
+													ctor: '::',
+													_0: A2(
+														_elm_lang$html$Html$td,
+														{ctor: '[]'},
+														{
+															ctor: '::',
+															_0: A2(
+																_elm_lang$html$Html$map,
+																_user$project$DownloadForm_Types$FromDate,
+																_user$project$DownloadForm_View$renderPicker(model.fromDate)),
+															_1: {ctor: '[]'}
+														}),
+													_1: {ctor: '[]'}
+												}
+											}),
+										_1: {
+											ctor: '::',
+											_0: A2(
+												_elm_lang$html$Html$tr,
+												{ctor: '[]'},
+												{
+													ctor: '::',
+													_0: A2(
+														_elm_lang$html$Html$td,
+														{ctor: '[]'},
+														{
+															ctor: '::',
+															_0: _elm_lang$html$Html$text('To '),
+															_1: {ctor: '[]'}
+														}),
+													_1: {
+														ctor: '::',
+														_0: A2(
+															_elm_lang$html$Html$td,
+															{ctor: '[]'},
+															{
+																ctor: '::',
+																_0: A2(
+																	_elm_lang$html$Html$map,
+																	_user$project$DownloadForm_Types$ToDate,
+																	_user$project$DownloadForm_View$renderPicker(model.toDate)),
+																_1: {ctor: '[]'}
+															}),
+														_1: {ctor: '[]'}
+													}
+												}),
+											_1: {ctor: '[]'}
+										}
 									}),
 								_1: {
 									ctor: '::',
@@ -13824,7 +13899,13 @@ var _user$project$DownloadForm_View$root = function (model) {
 														A2(
 															_elm_lang$core$Basics_ops['++'],
 															'Trades - ',
-															A2(_user$project$DownloadForm_View$getDateString, 'yyyy-MM-dd', model.date))),
+															A2(
+																_elm_lang$core$Basics_ops['++'],
+																A2(_user$project$DownloadForm_View$getDateString, 'yyyy-MM-dd', model.fromDate),
+																A2(
+																	_elm_lang$core$Basics_ops['++'],
+																	' to ',
+																	A2(_user$project$DownloadForm_View$getDateString, 'yyyy-MM-dd', model.toDate))))),
 													_1: {ctor: '[]'}
 												}
 											}
@@ -13891,13 +13972,7 @@ var _user$project$DownloadForm_View$root = function (model) {
 												_0: _elm_lang$html$Html_Attributes$href('data-input-api'),
 												_1: {
 													ctor: '::',
-													_0: A2(
-														_elm_lang$html$Html_Attributes$attribute,
-														'download',
-														A2(
-															_elm_lang$core$Basics_ops['++'],
-															'Trades - ',
-															A2(_user$project$DownloadForm_View$getDateString, 'yyyy-MM-dd', model.date))),
+													_0: A2(_elm_lang$html$Html_Attributes$attribute, 'download', 'All Trades'),
 													_1: {ctor: '[]'}
 												}
 											}
@@ -13953,29 +14028,45 @@ var _user$project$DownloadForm_State$subscriptions = function (model) {
 var _user$project$DownloadForm_State$update = F2(
 	function (msg, model) {
 		var _p1 = msg;
-		var _p2 = A2(_elm_community$elm_datepicker$DatePicker$update, _p1._0, model.date);
-		var newPicker = _p2._0;
-		var newPickerCmd = _p2._1;
-		return A2(
-			_elm_lang$core$Platform_Cmd_ops['!'],
-			_elm_lang$core$Native_Utils.update(
-				model,
-				{date: newPicker}),
-			{
-				ctor: '::',
-				_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$DownloadForm_Types$ChangeDate, newPickerCmd),
-				_1: {ctor: '[]'}
-			});
+		if (_p1.ctor === 'FromDate') {
+			var _p2 = A2(_elm_community$elm_datepicker$DatePicker$update, _p1._0, model.fromDate);
+			var newPicker = _p2._0;
+			var newPickerCmd = _p2._1;
+			return A2(
+				_elm_lang$core$Platform_Cmd_ops['!'],
+				_elm_lang$core$Native_Utils.update(
+					model,
+					{fromDate: newPicker}),
+				{
+					ctor: '::',
+					_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$DownloadForm_Types$FromDate, newPickerCmd),
+					_1: {ctor: '[]'}
+				});
+		} else {
+			var _p3 = A2(_elm_community$elm_datepicker$DatePicker$update, _p1._0, model.toDate);
+			var newPicker = _p3._0;
+			var newPickerCmd = _p3._1;
+			return A2(
+				_elm_lang$core$Platform_Cmd_ops['!'],
+				_elm_lang$core$Native_Utils.update(
+					model,
+					{toDate: newPicker}),
+				{
+					ctor: '::',
+					_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$DownloadForm_Types$ToDate, newPickerCmd),
+					_1: {ctor: '[]'}
+				});
+		}
 	});
-var _user$project$DownloadForm_State$init = function (_p3) {
-	var _p4 = _p3;
+var _user$project$DownloadForm_State$init = function (_p4) {
+	var _p5 = _p4;
 	var defaultSettings = _elm_community$elm_datepicker$DatePicker$defaultSettings;
-	var _p5 = _elm_community$elm_datepicker$DatePicker$init(
+	var _p6 = _elm_community$elm_datepicker$DatePicker$init(
 		_elm_lang$core$Native_Utils.update(
 			defaultSettings,
 			{
 				pickedDate: _elm_lang$core$Maybe$Just(
-					_elm_lang$core$Date$fromTime(_p4.todayDate)),
+					_elm_lang$core$Date$fromTime(_p5.todayDate)),
 				inputClassList: {
 					ctor: '::',
 					_0: {ctor: '_Tuple2', _0: 'form-control', _1: true},
@@ -13983,12 +14074,20 @@ var _user$project$DownloadForm_State$init = function (_p3) {
 				},
 				dateFormatter: _justinmimbs$elm_date_extra$Date_Extra$toFormattedString('ddd MMMM yyyy')
 			}));
-	var picker = _p5._0;
-	var pickerCmd = _p5._1;
+	var picker = _p6._0;
+	var pickerCmd = _p6._1;
 	return A2(
 		_elm_lang$core$Platform_Cmd_ops['!'],
-		{date: picker},
-		{ctor: '[]'});
+		{fromDate: picker, toDate: picker},
+		{
+			ctor: '::',
+			_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$DownloadForm_Types$FromDate, pickerCmd),
+			_1: {
+				ctor: '::',
+				_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$DownloadForm_Types$ToDate, pickerCmd),
+				_1: {ctor: '[]'}
+			}
+		});
 };
 
 var _user$project$DownloadForm$main = _elm_lang$html$Html$programWithFlags(

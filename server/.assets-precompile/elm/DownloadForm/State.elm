@@ -23,19 +23,30 @@ init { todayDate } =
                     , dateFormatter = Date.Extra.toFormattedString "ddd MMMM yyyy"
                 }
     in
-        { date = picker }
-            ! []
+        { fromDate = picker
+        , toDate = picker
+        }
+            ! [ Cmd.map FromDate pickerCmd
+              , Cmd.map ToDate pickerCmd
+              ]
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        ChangeDate subMsg ->
+        FromDate subMsg ->
             let
                 ( newPicker, newPickerCmd, _ ) =
-                    DatePicker.update subMsg model.date
+                    DatePicker.update subMsg model.fromDate
             in
-                { model | date = newPicker } ! [ Cmd.map ChangeDate newPickerCmd ]
+                { model | fromDate = newPicker } ! [ Cmd.map FromDate newPickerCmd ]
+
+        ToDate subMsg ->
+            let
+                ( newPicker, newPickerCmd, _ ) =
+                    DatePicker.update subMsg model.toDate
+            in
+                { model | toDate = newPicker } ! [ Cmd.map ToDate newPickerCmd ]
 
 
 subscriptions model =

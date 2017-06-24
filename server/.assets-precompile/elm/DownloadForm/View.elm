@@ -1,7 +1,7 @@
 module DownloadForm.View exposing (root)
 
 import DownloadForm.Types exposing (..)
-import Html exposing (Html, div, a, text, button, i, small, label, p, input, h4, select, option, textarea, span)
+import Html exposing (Html, div, a, text, button, i, small, label, p, input, h4, select, option, textarea, table, tr, td)
 import Html.Attributes exposing (attribute, disabled, class, checked, type_, name, placeholder, href, style, value, selected, rows)
 import Html.Events exposing (onClick, onInput, on, targetValue)
 import DatePicker
@@ -17,19 +17,30 @@ root model =
                 [ h4
                     []
                     [ text "Pick a date" ]
-                , div
-                    [ style
-                        [ ( "max-width", "10em" )
-                        , ( "display", "inline-block" )
+                , table []
+                    [ tr []
+                        [ td [] [ text "From " ]
+                        , td []
+                            [ renderPicker model.fromDate
+                                |> Html.map FromDate
+                            ]
                         ]
-                    ]
-                    [ DatePicker.view model.date
-                        |> Html.map ChangeDate
+                    , tr []
+                        [ td [] [ text "To " ]
+                        , td []
+                            [ renderPicker model.toDate
+                                |> Html.map ToDate
+                            ]
+                        ]
                     ]
                 , a
                     [ class "btn btn-inverse waves-effect waves-light m-b-5 m-l-10"
                     , href "data-input-api"
-                    , attribute "download" <| "Trades - " ++ (getDateString "yyyy-MM-dd" model.date)
+                    , attribute "download" <|
+                        "Trades - "
+                            ++ (getDateString "yyyy-MM-dd" model.fromDate)
+                            ++ " to "
+                            ++ ((getDateString "yyyy-MM-dd" model.toDate))
                     ]
                     [ text <| " Download CSV "
                     , i [ class "fa fa-download" ] []
@@ -45,13 +56,25 @@ root model =
                 , a
                     [ class "btn btn-inverse waves-effect waves-light m-b-5 m-l-10"
                     , href "data-input-api"
-                    , attribute "download" <| "Trades - " ++ (getDateString "yyyy-MM-dd" model.date)
+                    , attribute "download" "All Trades"
                     ]
                     [ text <| " Download CSV "
                     , i [ class "fa fa-download" ] []
                     ]
                 ]
             ]
+        ]
+
+
+renderPicker picker =
+    div
+        [ class "m-b-10"
+        , style
+            [ ( "max-width", "10em" )
+            , ( "display", "inline-block" )
+            ]
+        ]
+        [ DatePicker.view picker
         ]
 
 
