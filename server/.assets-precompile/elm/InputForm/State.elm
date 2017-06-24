@@ -160,7 +160,7 @@ initForm todayDate =
     , ( "COUNTERPARTY_NAME", "Counterparty Name", DBString True 53 "" )
     , ( "COUNTERPARTY_DESK_CODE", "Counterparty Desk Code", DBString True 50 "" )
     , ( "COUNTERPARTY_COMPANY", "Counterparty Company", DBString True 57 "" )
-    , ( "DEAL_DATE_TIME", "Deal Date Time", DBTimeStamp False <| Date.Extra.toFormattedString "yyyy-mm-dd HH:mm:ss" <| Date.fromTime todayDate )
+    , ( "DEAL_DATE_TIME", "Deal Date Time", DBTimeStamp False <| Date.Extra.toFormattedString "yyyy-MM-dd HH:mm:ss" <| Date.fromTime todayDate )
     , ( "TRADE_DATE", "Trade Date", DBDate False <| initialDbDate todayDate )
     , ( "START_DATE", "Start Date", DBDate True <| initialDbDate todayDate )
     , ( "TERMINATION_DATE", "Termination Date", DBDate True <| initialDbDate todayDate )

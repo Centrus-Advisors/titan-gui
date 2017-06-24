@@ -14495,7 +14495,7 @@ var _user$project$InputForm_State$initForm = function (todayDate) {
 														false,
 														A2(
 															_justinmimbs$elm_date_extra$Date_Extra$toFormattedString,
-															'yyyy-mm-dd HH:mm:ss',
+															'yyyy-MM-dd HH:mm:ss',
 															_elm_lang$core$Date$fromTime(todayDate)))
 												},
 												_1: {
