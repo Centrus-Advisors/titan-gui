@@ -34,6 +34,7 @@
     "ramda-fantasy": "^0.8.0",
     "require-dir-all": "^0.4.12",
     "root-require": "^0.3.1",
+    "supertest": "^3.0.0",
     "winston": "^2.3.1"
   }
 }
