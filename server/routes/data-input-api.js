@@ -5,12 +5,31 @@ const csv = require("root-require")("./server/lib/csv");
 
 const dbName = "database.json";
 
+const filterFromDate = fromDateString => db => {
+    if (!fromDateString) {
+        return db;
+    }
+    const fromDate = new Date(fromDateString);
+    return db.filter(v => new Date(v.createdAt) >= fromDate);
+};
+
+const filterToDate = toDateString => db => {
+    if (!toDateString) {
+        return db;
+    }
+    const toDate = new Date(toDateString);
+    return db.filter(v => new Date(v.createdAt) < toDate);
+};
+
 module.exports = req => {
     switch (req.method) {
     case "GET":
         return database
                 .loadDb(dbName)
+                .map(filterFromDate(req.query.fromDate))
+                .map(filterToDate(req.query.toDate))
                 .chain(csv.stringify)
+                .map(content => content || "No Content")
                 .map(content => purifier.respond.custom({ content }));
     case "POST":
         return database

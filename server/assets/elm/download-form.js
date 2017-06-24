@@ -13739,6 +13739,19 @@ var _user$project$DownloadForm_View$getDateString = F2(
 				_justinmimbs$elm_date_extra$Date_Extra$toFormattedString(format),
 				_elm_community$elm_datepicker$DatePicker$getDate(picker)));
 	});
+var _user$project$DownloadForm_View$csvUrl = F2(
+	function (fromDatePicker, toDatePicker) {
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			'/data-input-api?fromDate=',
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				A2(_user$project$DownloadForm_View$getDateString, 'yyyy-MM-dd', fromDatePicker),
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'&toDate=',
+					A2(_user$project$DownloadForm_View$getDateString, 'yyyy-MM-dd', toDatePicker))));
+	});
 var _user$project$DownloadForm_View$renderPicker = function (picker) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -13808,7 +13821,7 @@ var _user$project$DownloadForm_View$root = function (model) {
 								{ctor: '[]'},
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html$text('Pick a date'),
+									_0: _elm_lang$html$Html$text('Trades for period'),
 									_1: {ctor: '[]'}
 								}),
 							_1: {
@@ -13828,7 +13841,7 @@ var _user$project$DownloadForm_View$root = function (model) {
 													{ctor: '[]'},
 													{
 														ctor: '::',
-														_0: _elm_lang$html$Html$text('From '),
+														_0: _elm_lang$html$Html$text('From the beginning of '),
 														_1: {ctor: '[]'}
 													}),
 												_1: {
@@ -13859,7 +13872,7 @@ var _user$project$DownloadForm_View$root = function (model) {
 														{ctor: '[]'},
 														{
 															ctor: '::',
-															_0: _elm_lang$html$Html$text('To '),
+															_0: _elm_lang$html$Html$text('To the beginning of '),
 															_1: {ctor: '[]'}
 														}),
 													_1: {
@@ -13890,7 +13903,8 @@ var _user$project$DownloadForm_View$root = function (model) {
 											_0: _elm_lang$html$Html_Attributes$class('btn btn-inverse waves-effect waves-light m-b-5 m-l-10'),
 											_1: {
 												ctor: '::',
-												_0: _elm_lang$html$Html_Attributes$href('data-input-api'),
+												_0: _elm_lang$html$Html_Attributes$href(
+													A2(_user$project$DownloadForm_View$csvUrl, model.fromDate, model.toDate)),
 												_1: {
 													ctor: '::',
 													_0: A2(
@@ -13905,7 +13919,10 @@ var _user$project$DownloadForm_View$root = function (model) {
 																A2(
 																	_elm_lang$core$Basics_ops['++'],
 																	' to ',
-																	A2(_user$project$DownloadForm_View$getDateString, 'yyyy-MM-dd', model.toDate))))),
+																	A2(
+																		_elm_lang$core$Basics_ops['++'],
+																		A2(_user$project$DownloadForm_View$getDateString, 'yyyy-MM-dd', model.toDate),
+																		'.csv'))))),
 													_1: {ctor: '[]'}
 												}
 											}
@@ -13957,7 +13974,7 @@ var _user$project$DownloadForm_View$root = function (model) {
 									{ctor: '[]'},
 									{
 										ctor: '::',
-										_0: _elm_lang$html$Html$text('Complete database'),
+										_0: _elm_lang$html$Html$text('All Trades'),
 										_1: {ctor: '[]'}
 									}),
 								_1: {
@@ -13972,7 +13989,7 @@ var _user$project$DownloadForm_View$root = function (model) {
 												_0: _elm_lang$html$Html_Attributes$href('data-input-api'),
 												_1: {
 													ctor: '::',
-													_0: A2(_elm_lang$html$Html_Attributes$attribute, 'download', 'All Trades'),
+													_0: A2(_elm_lang$html$Html_Attributes$attribute, 'download', 'All Trades.csv'),
 													_1: {ctor: '[]'}
 												}
 											}
@@ -14060,13 +14077,14 @@ var _user$project$DownloadForm_State$update = F2(
 	});
 var _user$project$DownloadForm_State$init = function (_p4) {
 	var _p5 = _p4;
+	var _p8 = _p5.todayDate;
 	var defaultSettings = _elm_community$elm_datepicker$DatePicker$defaultSettings;
 	var _p6 = _elm_community$elm_datepicker$DatePicker$init(
 		_elm_lang$core$Native_Utils.update(
 			defaultSettings,
 			{
 				pickedDate: _elm_lang$core$Maybe$Just(
-					_elm_lang$core$Date$fromTime(_p5.todayDate)),
+					_elm_lang$core$Date$fromTime(_p8)),
 				inputClassList: {
 					ctor: '::',
 					_0: {ctor: '_Tuple2', _0: 'form-control', _1: true},
@@ -14074,17 +14092,36 @@ var _user$project$DownloadForm_State$init = function (_p4) {
 				},
 				dateFormatter: _justinmimbs$elm_date_extra$Date_Extra$toFormattedString('ddd MMMM yyyy')
 			}));
-	var picker = _p6._0;
-	var pickerCmd = _p6._1;
+	var fromPicker = _p6._0;
+	var fromPickerCmd = _p6._1;
+	var _p7 = _elm_community$elm_datepicker$DatePicker$init(
+		_elm_lang$core$Native_Utils.update(
+			defaultSettings,
+			{
+				pickedDate: _elm_lang$core$Maybe$Just(
+					A3(
+						_justinmimbs$elm_date_extra$Date_Extra$add,
+						_justinmimbs$elm_date_extra$Date_Extra$Day,
+						1,
+						_elm_lang$core$Date$fromTime(_p8))),
+				inputClassList: {
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'form-control', _1: true},
+					_1: {ctor: '[]'}
+				},
+				dateFormatter: _justinmimbs$elm_date_extra$Date_Extra$toFormattedString('ddd MMMM yyyy')
+			}));
+	var toPicker = _p7._0;
+	var toPickerCmd = _p7._1;
 	return A2(
 		_elm_lang$core$Platform_Cmd_ops['!'],
-		{fromDate: picker, toDate: picker},
+		{fromDate: fromPicker, toDate: toPicker},
 		{
 			ctor: '::',
-			_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$DownloadForm_Types$FromDate, pickerCmd),
+			_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$DownloadForm_Types$FromDate, fromPickerCmd),
 			_1: {
 				ctor: '::',
-				_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$DownloadForm_Types$ToDate, pickerCmd),
+				_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$DownloadForm_Types$ToDate, toPickerCmd),
 				_1: {ctor: '[]'}
 			}
 		});

@@ -16,17 +16,17 @@ root model =
                 [ class "card-box" ]
                 [ h4
                     []
-                    [ text "Pick a date" ]
+                    [ text "Trades for period" ]
                 , table []
                     [ tr []
-                        [ td [] [ text "From " ]
+                        [ td [] [ text "From the beginning of " ]
                         , td []
                             [ renderPicker model.fromDate
                                 |> Html.map FromDate
                             ]
                         ]
                     , tr []
-                        [ td [] [ text "To " ]
+                        [ td [] [ text "To the beginning of " ]
                         , td []
                             [ renderPicker model.toDate
                                 |> Html.map ToDate
@@ -35,12 +35,13 @@ root model =
                     ]
                 , a
                     [ class "btn btn-inverse waves-effect waves-light m-b-5 m-l-10"
-                    , href "data-input-api"
+                    , href <| csvUrl model.fromDate model.toDate
                     , attribute "download" <|
                         "Trades - "
                             ++ (getDateString "yyyy-MM-dd" model.fromDate)
                             ++ " to "
                             ++ ((getDateString "yyyy-MM-dd" model.toDate))
+                            ++ ".csv"
                     ]
                     [ text <| " Download CSV "
                     , i [ class "fa fa-download" ] []
@@ -52,11 +53,11 @@ root model =
                 [ class "card-box " ]
                 [ h4
                     []
-                    [ text "Complete database" ]
+                    [ text "All Trades" ]
                 , a
                     [ class "btn btn-inverse waves-effect waves-light m-b-5 m-l-10"
                     , href "data-input-api"
-                    , attribute "download" "All Trades"
+                    , attribute "download" "All Trades.csv"
                     ]
                     [ text <| " Download CSV "
                     , i [ class "fa fa-download" ] []
@@ -82,3 +83,10 @@ getDateString format picker =
     DatePicker.getDate picker
         |> Maybe.map (Date.Extra.toFormattedString format)
         |> Maybe.withDefault ""
+
+
+csvUrl fromDatePicker toDatePicker =
+    "/data-input-api?fromDate="
+        ++ (getDateString "yyyy-MM-dd" fromDatePicker)
+        ++ "&toDate="
+        ++ (getDateString "yyyy-MM-dd" toDatePicker)

@@ -15,19 +15,27 @@ init { todayDate } =
         defaultSettings =
             DatePicker.defaultSettings
 
-        ( picker, pickerCmd ) =
+        ( fromPicker, fromPickerCmd ) =
             DatePicker.init
                 { defaultSettings
                     | pickedDate = Just <| Date.fromTime todayDate
                     , inputClassList = [ ( "form-control", True ) ]
                     , dateFormatter = Date.Extra.toFormattedString "ddd MMMM yyyy"
                 }
+
+        ( toPicker, toPickerCmd ) =
+            DatePicker.init
+                { defaultSettings
+                    | pickedDate = Just <| Date.Extra.add Date.Extra.Day 1 <| Date.fromTime todayDate
+                    , inputClassList = [ ( "form-control", True ) ]
+                    , dateFormatter = Date.Extra.toFormattedString "ddd MMMM yyyy"
+                }
     in
-        { fromDate = picker
-        , toDate = picker
+        { fromDate = fromPicker
+        , toDate = toPicker
         }
-            ! [ Cmd.map FromDate pickerCmd
-              , Cmd.map ToDate pickerCmd
+            ! [ Cmd.map FromDate fromPickerCmd
+              , Cmd.map ToDate toPickerCmd
               ]
 
 
