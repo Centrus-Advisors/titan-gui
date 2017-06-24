@@ -24,7 +24,7 @@ const loadDb = dbName => readFile(dbName).map(JSON.parse);
 
 // Overrides the entire database
 const writeDb = curry((dbName, dbContent) =>
-    writeFile(dbName)(JSON.stringify(dbContent))
+    writeFile(dbName)(JSON.stringify(dbContent, null, 2))
 );
 
 const save = curry((dbName, record) => {
